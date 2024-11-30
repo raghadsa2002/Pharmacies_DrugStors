@@ -30,7 +30,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Medicines List</h4>
 
-                                    <!-- التحقق من الأخطاء -->
+                                    
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -52,9 +52,9 @@
         <th>Category</th>
         <th>Stock</th>
         <th>Status</th>
-        <th>Description</th> <!-- وصف المنتج -->
-        <th>Manufacturer</th> <!-- الشركة المصنعة -->
-        <th>Image</th> <!-- صورة المنتج -->
+        <th>Description</th> 
+        <th>Manufacturer</th> 
+        <th>Image</th> 
         <th>Created At</th>
         <th>Updated At</th>
         <th>Actions</th>

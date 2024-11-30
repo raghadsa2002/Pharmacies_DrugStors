@@ -17,9 +17,9 @@ return new class extends Migration
             $table->decimal('price', 8, 2); 
             $table->unsignedBigInteger('category_id'); 
             $table->text('description')->nullable();
-            $table->string('manufacturer')->nullable(); //الشركة المصنعة 
+            $table->string('manufacturer')->nullable(); 
             $table->string('status')->default('available'); 
-            $table->integer('stock')->default(0); //الكمية
+            $table->integer('stock')->default(0); 
             $table->string('image')->nullable(); 
             $table->timestamps();
     

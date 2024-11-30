@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Edit Category</title>
 
-    @include('layouts.Admin.LinkHeader')  <!-- تضمين روابط CSS الخاصة بالثيم -->
-    @include('layouts.Admin.LinkSideBar')  <!-- تضمين الشريط الجانبي -->
+    @include('layouts.Admin.LinkHeader')  
+    @include('layouts.Admin.LinkSideBar')  
 
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -16,11 +16,11 @@
 
 <body>
     <div class="container-scroller">
-        @include('layouts.Admin.Header')  <!-- هيدر الصفحة -->
+        @include('layouts.Admin.Header')  
 
         <div class="container-fluid page-body-wrapper">
-            @include('layouts.Admin.Setting')  <!-- إعدادات الشريط الجانبي -->
-            @include('layouts.Admin.Sidebar')  <!-- الشريط الجانبي نفسه -->
+            @include('layouts.Admin.Setting')  
+            @include('layouts.Admin.Sidebar')  
 
             <div class="main-panel">
                 <div class="content-wrapper">
@@ -31,7 +31,7 @@
                                     <h4 class="card-title">Edit Category</h4>
                                     <p class="card-description"> Update category information </p>
 
-                                    <!-- التحقق من الأخطاء -->
+                                    
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -42,7 +42,7 @@
                                     </div>
                                     @endif
 
-                                    <!-- فورم التعديل -->
+                                    
                                     <form method="POST" action="{{ route('categories.update', $category->id) }}">
                                         @csrf
                                         @method('PUT')
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    @include('layouts.Admin.LinkJS')  <!-- تضمين روابط JavaScript الخاصة بالثيم -->
+    @include('layouts.Admin.LinkJS')
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

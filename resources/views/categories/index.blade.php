@@ -30,7 +30,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Categories List</h4>
 
-                                    <!-- التحقق من الأخطاء -->
+                                   
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -41,7 +41,7 @@
                                     </div>
                                     @endif
 
-                                    <!-- جدول عرض البيانات -->
+                                   
                                     <div class="table-responsive">
                                         <table class="table">
                                             <thead>

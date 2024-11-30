@@ -35,25 +35,25 @@
                                         @csrf
                                         @method('PUT')
 
-                                        <!-- اسم الدواء -->
+                                        
                                         <div class="form-group">
                                             <label for="name">Name</label>
                                             <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $medicine->name) }}" placeholder="Medicine Name" required>
                                         </div>
 
-                                        <!-- السعر -->
+                                        
                                         <div class="form-group">
                                             <label for="price">Price</label>
                                             <input type="number" class="form-control" id="price" name="price" value="{{ old('price', $medicine->price) }}" step="0.01" placeholder="Price" required>
                                         </div>
 
-                                        <!-- الكمية في المخزون -->
+                                       
                                         <div class="form-group">
                                             <label for="stock">Stock</label>
                                             <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock', $medicine->stock) }}" placeholder="Stock Quantity" required>
                                         </div>
 
-                                        <!-- الحالة -->
+                                        
                                         <div class="form-group">
                                             <label for="status">Status</label>
                                             <select class="form-control" id="status" name="status" required>
@@ -62,7 +62,7 @@
                                             </select>
                                         </div>
 
-                                        <!-- التصنيف -->
+                                       
                                         <div class="form-group">
                                             <label for="category_id">Category</label>
                                             <select class="form-control" id="category_id" name="category_id" required>
@@ -74,19 +74,29 @@
                                             </select>
                                         </div>
 
-                                        <!-- الوصف -->
+                                        
                                         <div class="form-group">
                                             <label for="description">Description</label>
                                             <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description">{{ old('description', $medicine->description) }}</textarea>
                                         </div>
 
-                                        <!-- الشركة المصنعة -->
-                                        <div class="form-group">
-                                            <label for="manufacturer">Manufacturer</label>
-                                            <input type="text" class="form-control" id="manufacturer" name="manufacturer" value="{{ old('manufacturer', $medicine->manufacturer) }}" placeholder="Manufacturer Name">
-                                        </div>
+                                        
 
-                                        <!-- الصورة -->
+
+                                       
+<div class="form-group">
+    <label for="company_id">Pharmaceutical Company</label>
+    <select class="form-control" id="company_id" name="company_id" required>
+        @foreach ($companies as $company)
+            <option value="{{ $company->id }}" 
+                {{ $medicine->company_id == $company->id ? 'selected' : '' }}>
+                {{ $company->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                                        
                                         <div class="form-group">
                                             <label for="image">Image</label>
                                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
@@ -95,7 +105,7 @@
                                             @endif
                                         </div>
 
-                                        <!-- زر الإرسال -->
+                                        
                                         <button type="submit" class="btn btn-primary mr-2">Update</button>
                                         <a href="{{ route('medicines.index') }}" class="btn btn-light">Cancel</a>
                                     </form>

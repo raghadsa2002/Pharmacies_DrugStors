@@ -39,25 +39,30 @@
                                     <form class="forms-sample" method="POST" action="{{ route('medicines.store') }}" enctype="multipart/form-data">
                                         @csrf
 
-                                        <!-- اسم الدواء -->
+                                        
                                         <div class="form-group">
                                             <label for="name">Name</label>
                                             <input type="text" class="form-control" id="name" name="name" placeholder="Medicine Name" required>
                                         </div>
 
-                                        <!-- السعر -->
+
+
+          
+
+
+                                       
                                         <div class="form-group">
                                             <label for="price">Price</label>
                                             <input type="number" class="form-control" id="price" name="price" placeholder="Price" step="0.01" required>
                                         </div>
 
-                                        <!-- الكمية في المخزون -->
+                                        
                                         <div class="form-group">
                                             <label for="stock">Stock</label>
                                             <input type="number" class="form-control" id="stock" name="stock" placeholder="Stock Quantity" required>
                                         </div>
 
-                                        <!-- الحالة -->
+                                        
                                         <div class="form-group">
                                             <label for="status">Status</label>
                                             <select class="form-control" id="status" name="status" required>
@@ -66,37 +71,42 @@
                                             </select>
                                         </div>
 
-                                        <!-- التصنيف -->
-                                        <div class="form-group">
-                                            <label for="category_id">Category</label>
-                                            <select class="form-control" id="category_id" name="category_id" required>
-                                                @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                     
+<div class="form-group">
+    <label for="category_id">Category</label>
+    <select class="form-control" id="category_id" name="category_id" required>
+        @foreach ($categories as $category)
+        <option value="{{ $category->id }}">{{ $category->name }}</option>
+        @endforeach
+    </select>
+</div>
 
-                                        <!-- الوصف -->
-                                        <div class="form-group">
-                                            <label for="description">Description</label>
-                                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
-                                        </div>
 
-                                        <!-- الشركة المصنعة -->
-                                        <div class="form-group">
-                                            <label for="manufacturer">Manufacturer</label>
-                                            <input type="text" class="form-control" id="manufacturer" name="manufacturer" placeholder="Manufacturer Name">
-                                        </div>
+<div class="form-group">
+    <label for="company_id">Pharmaceutical Company</label>
+    <select class="form-control" id="company_id" name="company_id" required>
+        <option value="">Select a Company</option>
+        @foreach ($companies as $company)
+        <option value="{{ $company->id }}">{{ $company->name }}</option>
+        @endforeach
+    </select>
+</div>
 
-                                        <!-- الصورة -->
-                                        <div class="form-group">
-                                            <label for="image">Image</label>
-                                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                        </div>
 
-                                        <!-- زر الإرسال -->
-                                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                        <a href="{{ route('medicines.index') }}" class="btn btn-light">Cancel</a>
+<div class="form-group">
+    <label for="description">Description</label>
+    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
+</div>
+
+
+<div class="form-group">
+    <label for="image">Image</label>
+    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+</div>
+
+
+<button type="submit" class="btn btn-primary mr-2">Submit</button>
+<a href="{{ route('medicines.index') }}" class="btn btn-light">Cancel</a>
                                     </form>
                                 </div>
                             </div>
@@ -104,7 +114,7 @@
                     </div>
                 </div>
 
-                <!-- Footer -->
+           
                 @include('layouts.Admin.Footer')
             </div>
         </div>
