@@ -115,6 +115,8 @@ class PharmacyController extends Controller
 
         $pharmacy = Pharmacy::findOrFail($pharmacyID);
 
+        $pharmacy->update([ 'status' => 0]);
+
         $pharmacy->delete();
 
         return redirect()->back()->with('success_message', 'Pharmacy Deleted Successfully');
@@ -147,7 +149,12 @@ class PharmacyController extends Controller
 
     public function restore($pharmacyID)
     {
+
         Pharmacy::withTrashed()->where('id', $pharmacyID)->restore();
+        $pharmacy = Pharmacy::findOrFail($pharmacyID);
+
+        $pharmacy->update([ 'status' => 1]);
+
 
         return redirect()->route('admin.pharmacy.index')->with('success_message', 'Pharmacy Restored Successfully');
     }

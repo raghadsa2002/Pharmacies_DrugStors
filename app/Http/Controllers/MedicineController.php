@@ -115,4 +115,10 @@ class MedicineController extends Controller
 
         return redirect()->route('medicines.index')->with('success', 'Medicine deleted successfully');
     }
+    public function websiteHome(){
+        //  get all medi
+
+        // return view('welcome', compact('medicine', 'categories', 'companies'));
+
+    }
 }
