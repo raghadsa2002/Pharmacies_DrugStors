@@ -92,6 +92,16 @@
                                                 required>
                                         </div>
 
+                                        <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" class="form-control" id="email" name="email" value="{{ $storehouse->email }}">
+</div>
+
+<div class="form-group">
+    <label for="password">Password (Leave blank to keep current password)</label>
+    <input type="password" class="form-control" id="password" name="password">
+</div>
+
                                         <button type="submit" class="btn btn-primary mr-2">Update</button>
                                         <button class="btn btn-light">Cancel</button>
                                     </form>

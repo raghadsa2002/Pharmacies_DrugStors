@@ -45,6 +45,14 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+        'store_houses' => [
+            'driver' => 'session',
+            'provider' => 'store_houses',
+        ],
+        'employees' => [
+            'driver' => 'session',
+            'provider' => 'employees',
+        ],
     ],
 
     /*
@@ -73,6 +81,14 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Admin::class),
+        ],
+        'store_houses' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\StoreHouse::class),
+        ],
+        'employees' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Employee::class),
         ],
 
         // 'users' => [

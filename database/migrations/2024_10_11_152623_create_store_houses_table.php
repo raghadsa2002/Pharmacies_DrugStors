@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('store_houses', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('email')->unique(); 
             $table->string('phone');
             $table->tinyInteger('status');
             $table->string('city');

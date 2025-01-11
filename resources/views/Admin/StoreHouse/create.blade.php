@@ -84,6 +84,17 @@
                                                 placeholder="Location" name="address" required>
                                         </div>
 
+
+                                        <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
+</div>
+
+<div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
+</div>
+
                                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                         <button class="btn btn-light">Cancel</button>
                                     </form>

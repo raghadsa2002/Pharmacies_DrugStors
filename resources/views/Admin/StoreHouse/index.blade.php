@@ -64,6 +64,7 @@
                                                     <th>Phone</th>
                                                     <th>City</th>
                                                     <th>Address</th>
+                                                    <th>email</th>
                                                     <th>Created By</th>
                                                     <th>Created Date</th>
                                                     <th>Last Updated Date</th>
@@ -83,6 +84,7 @@
                                                         <td>{{ $storeHouse->phone }}</td>
                                                         <td>{{ $storeHouse->city }}</td>
                                                         <td>{{ $storeHouse->address }}</td>
+                                                        <td>{{ $storeHouse->email }}</td>
                                                         <td>{{ $storeHouse->admin->name }}</td>
                                                         <td>{{ $storeHouse->created_at }}</td>
                                                         <td>{{ $storeHouse->updated_at }}</td>

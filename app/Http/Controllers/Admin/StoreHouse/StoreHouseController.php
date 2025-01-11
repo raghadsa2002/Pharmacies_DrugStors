@@ -30,32 +30,35 @@ class StoreHouseController extends Controller
     //تخزين بيانات المستودع في قاعدة البيانات
 
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|digits:10',
-            'city' => 'required|string',
-            'address' => 'required|string',
-            'status' => 'required',
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string',
+        'phone' => 'required|digits:10',
+        'city' => 'required|string',
+        'address' => 'required|string',
+        'status' => 'required',
+        'email' => 'required|email|unique:store_houses,email', // التحقق من صحة الإيميل وتفرده
+        'password' => 'required|string|min:8', // التحقق من كلمة المرور
+    ]);
+
+    $ifExists = StoreHouse::where('name', $validatedData['name'])->first();
+    if ($ifExists) {
+        return redirect()->back()->with('error_message', 'Store House Already Exists Write Another Name');
+    } else {
+        StoreHouse::create([
+            'name' => $validatedData['name'],
+            'status' => $request->input('status'),
+            'phone' => $validatedData['phone'],
+            'city' => $validatedData['city'],
+            'address' => $validatedData['address'],
+            'email' => $validatedData['email'], // إضافة الإيميل
+            'password' => bcrypt($validatedData['password']), // تخزين كلمة المرور بعد التشفير
+            'created_by' => Auth::guard('admin')->user()->id,
         ]);
 
-
-        $ifExists = StoreHouse::where('name', $validatedData['name'])->first();
-        if ($ifExists) {
-            return redirect()->back()->with('error_message', 'Store House Already Exists Write Another Name');
-        } else {
-            StoreHouse::create([
-                'name' => $validatedData['name'],
-                'status' => $request->input('status'),
-                'phone' => $validatedData['phone'],
-                'city' => $validatedData['city'],
-                'address' => $validatedData['address'],
-                'created_by' => Auth::guard('admin')->user()->id,
-            ]);
-
-            return redirect()->route('admin.storeHouse.index')->with('success_message', 'Store House Created Successfully');
-        }
+        return redirect()->route('admin.storeHouse.index')->with('success_message', 'Store House Created Successfully');
     }
+}
 
     //عرض صفحة تعديل مستودع
 
@@ -68,30 +71,38 @@ class StoreHouseController extends Controller
     //تعديل بيانات مستودع في قاعدة البيانات
 
     public function update(Request $request, $storeHouseID)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|digits:10',
-            'city' => 'required|string',
-            'address' => 'required|string',
-            'status' => 'required',
-        ]);
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string',
+        'phone' => 'required|digits:10',
+        'city' => 'required|string',
+        'address' => 'required|string',
+        'status' => 'required',
+        'email' => 'required|email|unique:store_houses,email,' . $storeHouseID,
+        'password' => 'nullable|string|min:8',
+    ]);
 
-        $storeHouse = StoreHouse::findOrFail($storeHouseID);
+    $storeHouse = StoreHouse::findOrFail($storeHouseID);
 
-        $storeHouse->update([
+    $updateData = [
+        'name' => $validatedData['name'],
+        'status' => $request->input('status'),
+        'phone' => $validatedData['phone'],
+        'city' => $validatedData['city'],
+        'address' => $validatedData['address'],
+        'email' => $validatedData['email'],
+        'created_by' => Auth::guard('admin')->user()->id,
+    ];
 
-            'name' => $validatedData['name'],
-            'status' => $request->input('status'),
-            'phone' => $validatedData['phone'],
-            'city' => $validatedData['city'],
-            'address' => $validatedData['address'],
-            'created_by' => Auth::guard('admin')->user()->id,
-        ]);
-
-
-        return redirect()->route('admin.storeHouse.index')->with('success_message', 'Store House Updated Successfully');
+    // تحديث كلمة السر فقط إذا تم إدخالها
+    if (!empty($validatedData['password'])) {
+        $updateData['password'] = bcrypt($validatedData['password']);
     }
+
+    $storeHouse->update($updateData);
+
+    return redirect()->route('admin.storeHouse.index')->with('success_message', 'Store House Updated Successfully');
+}
 
     //حذف مستودع ونقله للارشيف
 
