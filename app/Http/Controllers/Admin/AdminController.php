@@ -19,12 +19,12 @@ class AdminController extends Controller
     public function index()
     {
         $adminLogged = Auth::guard('admin')->user();
-        $adminName = $adminLogged->name;
+        // $adminName = $adminLogged->name;
         $adminCount = Admin::all()->count();
         $pharmacyCount = Pharmacy::all()->count();
         $storeHouseCount = StoreHouse::all()->count();
         $pharmaceuticalCompaniesCount = PharmaceuticalCompanies::all()->count();
 
-        return view('Admin.dashboard' , compact('adminName' , 'adminCount' , 'pharmacyCount' ,'storeHouseCount' ,'pharmaceuticalCompaniesCount'));
+        return view('Admin.dashboard' , compact( 'adminCount' , 'pharmacyCount' ,'storeHouseCount' ,'pharmaceuticalCompaniesCount'));
     }
 }

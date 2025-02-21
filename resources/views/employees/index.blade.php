@@ -19,7 +19,7 @@
         @include('layouts.Admin.Header')  <!-- هيدر الصفحة -->
 
         <div class="container-fluid page-body-wrapper">
-            @include('layouts.Admin.Setting')  <!-- إعدادات الشريط الجانبي -->
+         <!-- @include('layouts.Admin.Setting') -->  <!-- إعدادات الشريط الجانبي -->
             @include('layouts.Admin.Sidebar')  <!-- الشريط الجانبي نفسه -->
 
             <div class="main-panel">

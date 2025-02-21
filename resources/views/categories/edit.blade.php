@@ -19,7 +19,7 @@
         @include('layouts.Admin.Header')  
 
         <div class="container-fluid page-body-wrapper">
-            @include('layouts.Admin.Setting')  
+         <!-- @include('layouts.Admin.Setting') -->  
             @include('layouts.Admin.Sidebar')  
 
             <div class="main-panel">

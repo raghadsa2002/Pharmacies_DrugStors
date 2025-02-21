@@ -19,7 +19,7 @@
         @include('layouts.Admin.Header')  <!-- هيدر الصفحة -->
 
         <div class="container-fluid page-body-wrapper">
-            @include('layouts.Admin.Setting')  <!-- إعدادات الشريط الجانبي -->
+         <!-- @include('layouts.Admin.Setting') -->  <!-- إعدادات الشريط الجانبي -->
             @include('layouts.Admin.Sidebar')  <!-- الشريط الجانبي نفسه -->
 
             <div class="main-panel">
@@ -53,7 +53,7 @@
         <th>Stock</th>
         <th>Status</th>
         <th>Description</th> 
-        <th>Manufacturer</th> 
+        <th>Pharmaceutical Company</th> 
         <th>Image</th> 
         <th>Created At</th>
         <th>Updated At</th>
@@ -70,16 +70,16 @@
         <td>{{ $medicine->stock }}</td>
         <td>{{ $medicine->status }}</td>
         <td>{{ $medicine->description }}</td> <!-- عرض الوصف -->
-        <td>{{ $medicine->manufacturer }}</td> <!-- عرض الشركة المصنعة -->
+        <td>{{ $medicine->company->name ?? 'No Manufacturer' }}</td> <!-- عرض الشركة المصنعة -->
         <td>
             @if($medicine->image)
-                <img src="{{ asset('images/medicines/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 50px; height: 50px;"> <!-- عرض الصورة -->
+            <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" width="100">
             @else
                 No Image
             @endif
         </td>
         <td>{{ $medicine->created_at }}</td>
-        <td>{{ $medicine->updated_at }}</td>
+        <td> {{ $medicine->updated_at }} </td>
         <td>
             <a href="{{ route('medicines.edit', $medicine->id) }}" class="btn btn-warning btn-sm">Edit</a>
             <form action="{{ route('medicines.destroy', $medicine->id) }}" method="POST" style="display:inline;">
@@ -110,7 +110,7 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
+<script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function (event) {
                 event.preventDefault(); // Prevent form submission

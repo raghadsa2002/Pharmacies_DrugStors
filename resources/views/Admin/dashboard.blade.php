@@ -20,7 +20,7 @@
     <div class="container-fluid page-body-wrapper">
       <!-- partial:partials/_settings-panel.html -->
       
-      @include('layouts.Admin.Setting')
+   <!-- @include('layouts.Admin.Setting') -->
     
       <!-- partial -->
       <!-- partial:partials/_sidebar.html -->
@@ -33,7 +33,7 @@
             <div class="col-md-12 grid-margin">
               <div class="row">
                 <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                  <h3 class="font-weight-bold">Welcome {{$adminName}} {{session()->get('actor') }}
+                  <h3 class="font-weight-bold">Welcome {{session()->get('actor') }}
                   </h3>
                   <h6 class="font-weight-normal mb-0">All systems are running smoothly!</h6>
                 </div>

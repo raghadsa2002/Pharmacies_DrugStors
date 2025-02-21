@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\PharmaceuticalCompanies\PharmaceuticalCompaniesController;
 use App\Http\Controllers\Admin\Pharmacy\PharmacyController;
 use App\Http\Controllers\Admin\StoreHouse\StoreHouseController;
+use App\Http\Controllers\MedicineController;
+
 use Illuminate\Support\Facades\Route;
 
 

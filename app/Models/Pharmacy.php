@@ -30,6 +30,10 @@ class Pharmacy extends Authenticatable
      {
          return $this->belongsTo(Admin::class, 'created_by');
      }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
 
      /**

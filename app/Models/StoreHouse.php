@@ -21,7 +21,6 @@ class StoreHouse extends Authenticatable
         'email',
         'created_by',
     ];
-    protected $table="store_houses";
     //علاقة المستودعات مع المدير
 
     public function admin()

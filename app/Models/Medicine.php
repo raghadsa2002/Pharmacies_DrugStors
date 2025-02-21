@@ -38,4 +38,8 @@ public function pharmaceuticalCompany()
 {
     return $this->belongsTo(PharmaceuticalCompany::class, 'company_id'); 
 }
+public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

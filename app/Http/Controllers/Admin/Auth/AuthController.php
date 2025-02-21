@@ -28,7 +28,7 @@ class AuthController extends Controller
         ]);
     
         $check = $request->only('email', 'password');
-    
+
         if (Auth::guard('admin')->attempt($check)) {
             session()->put('actor', 'admin');
             return redirect()->route('admin.index');
@@ -38,7 +38,12 @@ class AuthController extends Controller
         } else if (Auth::guard('employees')->attempt($check)) {
             session()->put('actor', 'employees');
             return redirect()->route('admin.index');
-        } else {
+        }
+        else if (Auth::guard('pharmacy')->attempt($check)) {
+            session()->put('actor', 'pharmacy');
+            return redirect()->route('homePage');
+        } 
+        else {
             return redirect()->route('admin.login')->with('login_error_message', 'Error login. Please enter a valid email and password.');
         }
     }

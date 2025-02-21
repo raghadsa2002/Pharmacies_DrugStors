@@ -18,7 +18,7 @@
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <!-- partial:../../partials/_settings-panel.html -->
-            @include('layouts.Admin.Setting')
+         <!-- @include('layouts.Admin.Setting') -->
 
             <!-- partial -->
             <!-- partial:../../partials/_sidebar.html -->

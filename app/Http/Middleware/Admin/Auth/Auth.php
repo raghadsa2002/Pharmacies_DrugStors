@@ -16,7 +16,7 @@ class Auth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!FacadesAuth::guard('admin')->check())
+        if((!FacadesAuth::guard('admin')->check()) && (!FacadesAuth::guard('store_houses')->check()) && (!FacadesAuth::guard('employees')->check()) && (!FacadesAuth::guard('pharmacy')->check()))
         {
             return redirect()->route('admin.login')->with('error_message' , 'You Are Not Login , Please Login First');
         }
