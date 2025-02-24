@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Medicine;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Employee;
 use App\Models\PharmaceuticalCompanies;
+use Illuminate\Support\Facades\Auth;
+
 
 class MedicineController extends Controller
 {
@@ -17,8 +20,18 @@ class MedicineController extends Controller
 
     public function index()
     {
-        $medicines = Medicine::all();
-        
+        $store_id = null;
+        if(Auth::guard('employees')->user()) {
+            
+            $employee = Employee::findOrFail(Auth::guard('store_houses')->user()->id);
+            $store_id = $employee->storehouse_id; // 
+        } // عرض الادوية لموظف المستوجع
+        else
+            $store_id = Auth::guard('store_houses')->user()->id; // عرض الادوية لمدير المستوجع
+
+        // return var_dump('$store_id ' . $store_id);
+        $medicines = Medicine::where('store_houses_id',$store_id)->get();
+        // return dd($medicines);
         // إضافة رابط الصورة بشكل صحيح لكل دواء
         foreach ($medicines as $medicine) {
             if ($medicine->image) {
@@ -76,6 +89,14 @@ class MedicineController extends Controller
         $medicine->category_id = $request->category_id;
         $medicine->company_id = $request->company_id;
         $medicine->description = $request->description;
+        if(Auth::guard('employees')->user()) {
+            
+            $employee = Employee::findOrFail(Auth::guard('store_houses')->user()->id);
+            $medicine->store_houses_id = $employee->storehouse_id; // مدير المستودع هو من يدخل الدواء
+        
+        } // الموظف هو من يدخل الدواء
+        else
+            $medicine->store_houses_id = Auth::guard('store_houses')->user()->id; // مدير المستودع هو من يدخل الدواء
 
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension(); // اسم فريد للصورة

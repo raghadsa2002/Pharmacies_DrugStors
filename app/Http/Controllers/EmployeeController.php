@@ -5,12 +5,13 @@ use App\Models\Employee;
 use App\Models\Storehouse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmployeeController;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::with('storehouse')->get();
+        $employees = Employee::where('storehouse_id',Auth::guard('store_houses')->user()->id)->with('storehouse')->get();
         return view('employees.index', compact('employees'));
     }
 
@@ -28,11 +29,17 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees',
             'phone' => 'required|string|max:15',
             'address' => 'nullable|string',
-            'storehouse_id' => 'required|exists:store_houses,id',
             'password' => 'required',
         ]);
-
-        Employee::create($validated);
+        $employee = new Employee();
+        $employee->storehouse_id = Auth::guard('store_houses')->user()->id;
+        $employee->name = $request->name;
+        $employee->email = $request->email;
+        $employee->phone = $request->phone;
+        $employee->address = $request->address;
+        $employee->password = $request->password;
+       
+        $employee->save();
 
         return redirect()->route('employees.index')->with('success', 'Employee added successfully');
     }

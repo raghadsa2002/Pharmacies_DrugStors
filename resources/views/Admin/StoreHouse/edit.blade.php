@@ -94,7 +94,7 @@
 
                                         <div class="form-group">
     <label for="email">Email</label>
-    <input type="email" class="form-control" id="email" name="email" value="{{ $storehouse->email }}">
+    <input type="email" class="form-control" id="email" name="email" value="{{ $storeHouse->email }}">
 </div>
 
 <div class="form-group">

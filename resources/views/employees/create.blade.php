@@ -73,19 +73,6 @@
         <label for="address">Address</label>
         <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}">
     </div>
-
-    <div class="form-group">
-        <label for="storehouse_id">Storehouse</label>
-        <select class="form-control" id="storehouse_id" name="storehouse_id" required>
-            <option value="">Select Storehouse</option>
-            @foreach ($storehouses as $storehouse)
-                <option value="{{ $storehouse->id }}" {{ old('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
-                    {{ $storehouse->name }}
-                </option>
-            @endforeach
-        </select>
-
-    </div>
     <!-- <input type="text" hidden class="form-control" id="storehouse_id" name="storehouse_id" value="{{ Auth::user() }}"> -->
 
     <button type="submit" class="btn btn-primary">Add Employee</button>

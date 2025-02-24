@@ -27,6 +27,10 @@ class StoreHouse extends Authenticatable
     {
         return $this->belongsTo(Admin::class, 'created_by');
     }
+    public function medicines()
+    {
+        return $this->hasMany(Medicine::class);
+    }
 
     public function employees()
     {

@@ -15,7 +15,10 @@ class OrderController extends Controller
     public function index()
     {
         // استرجاع جميع الطلبات مع تفاصيل الصيدلاني والدواء
-        $orders = Order::with(['pharmacy', 'medicine'])->get();
+        $storehouseId = Auth::guard('store_houses')->user()->id;
+        $orders = Order::whereHas('medicine', function ($query) use ($storehouseId) {
+            $query->where('store_houses_id', $storehouseId);
+        })->with(['pharmacy', 'medicine'])->get();
         // return dd($orders);
         // إرجاع العرض مع البيانات
         return view('orders.index', compact('orders'));
