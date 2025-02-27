@@ -32,7 +32,7 @@ class EmployeeController extends Controller
             'password' => 'required',
         ]);
         $employee = new Employee();
-        $employee->storehouse_id = Auth::guard('store_houses')->user()->id;
+        // $employee->storehouse_id = Auth::guard('store_houses')->user()->id;
         $employee->name = $request->name;
         $employee->email = $request->email;
         $employee->phone = $request->phone;
@@ -58,7 +58,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email,' . $id,
             'phone' => 'required|string|max:15',
             'address' => 'nullable|string',
-            'storehouse_id' => 'required|exists:store_houses,id',
+            // 'storehouse_id' => 'required|exists:store_houses,id',
         ]);
 
         $employee = Employee::findOrFail($id);

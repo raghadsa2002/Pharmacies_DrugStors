@@ -30,6 +30,11 @@ class Medicine extends Model
     {
         return $this->belongsTo(StoreHouse::class, 'company_id');
     }
+
+    public function storehouse()
+{
+    return $this->belongsTo(\App\Models\StoreHouse::class, 'store_houses_id'); 
+}
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

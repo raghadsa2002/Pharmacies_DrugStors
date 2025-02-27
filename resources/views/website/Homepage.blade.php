@@ -63,6 +63,7 @@
         <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
         <p class="price">Company: {{ $medicine->company->name }}</p>
         <p class="price">Category: {{ $medicine->category->name }}</p>
+        <p class="price">المستودع: {{ $medicine->storehouse->name }}</p>
         <p class="price">${{ $medicine->price }}</p>
         
         <!-- زر إضافة إلى المفضلة -->

@@ -74,7 +74,7 @@
                                         </div>
 
                                         <!-- Storehouse -->
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label for="storehouse">Storehouse</label>
                                             <select class="form-control" id="storehouse" name="storehouse_id">
                                                 <option value="" disabled>Select a storehouse</option>
@@ -85,7 +85,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> -->
 
                                         <button type="submit" class="btn btn-primary mr-2">Save</button>
                                         <a href="{{ route('employees.index') }}" class="btn btn-light">Cancel</a>

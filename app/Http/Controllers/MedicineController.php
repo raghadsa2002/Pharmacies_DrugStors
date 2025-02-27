@@ -6,6 +6,7 @@ use App\Models\Medicine;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Employee;
+use App\Models\StoreHouse;
 use App\Models\PharmaceuticalCompanies;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,21 +47,27 @@ class MedicineController extends Controller
     {
         $companies = PharmaceuticalCompanies::all();
         $categories = Category::all();
-
-        // فلترة الأدوية حسب الشركة والفئة إذا كانت القيم موجودة
-        $medicines = Medicine::with('company', 'category');
-
-        if ($request->has('company_id') && $request->company_id != '') {
-            $medicines = $medicines->where('company_id', $request->company_id);
+        $storehouses = StoreHouse::all(); // جلب المستودعات
+    
+        // نبدأ استعلام الأدوية
+        $medicines = Medicine::query()->with('company', 'category', 'storehouse');
+    
+        // تطبيق الفلاتر فقط لو المستخدم اختار قيمة
+        if ($request->filled('company_id')) {
+            $medicines->where('company_id', $request->company_id);
         }
-
-        if ($request->has('category_id') && $request->category_id != '') {
-            $medicines = $medicines->where('category_id', $request->category_id);
+    
+        if ($request->filled('category_id')) {
+            $medicines->where('category_id', $request->category_id);
         }
-
+    
+        if ($request->filled('storehouse_id')) {
+            $medicines->where('store_houses_id', $request->storehouse_id);
+        }
+    
         $medicines = $medicines->get();
-
-        return view('website.products', compact('medicines', 'companies', 'categories'));
+    
+        return view('website.products', compact('medicines', 'companies', 'categories', 'storehouses'));
     }
 
     public function create()
@@ -80,7 +87,7 @@ class MedicineController extends Controller
             'category_id' => 'required|exists:categories,id',
             'company_id' => 'required|exists:pharmaceutical_companies,id',
         ]);
-
+    
         $medicine = new Medicine();
         $medicine->name = $request->name;
         $medicine->price = $request->price;
@@ -89,24 +96,27 @@ class MedicineController extends Controller
         $medicine->category_id = $request->category_id;
         $medicine->company_id = $request->company_id;
         $medicine->description = $request->description;
-        if(Auth::guard('employees')->user()) {
-            
-            $employee = Employee::findOrFail(Auth::guard('store_houses')->user()->id);
-            $medicine->store_houses_id = $employee->storehouse_id; // مدير المستودع هو من يدخل الدواء
-        
-        } // الموظف هو من يدخل الدواء
-        else
-            $medicine->store_houses_id = Auth::guard('store_houses')->user()->id; // مدير المستودع هو من يدخل الدواء
-
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension(); // اسم فريد للصورة
-            $request->file('image')->move(public_path('DashboardAssets/images'), $imageName); // حفظ الصورة داخل مجلد public/images
-            $medicine->image = $imageName; // حفظ اسم الصورة في قاعدة البيانات
+    
+        // التحقق من المستخدم وإسناد storehouse_id بشكل صحيح
+        if (Auth::guard('employees')->check()) {
+            $employee = Auth::guard('employees')->user();
+            $medicine->store_houses_id = $employee->storehouse_id; // المستودع المرتبط بالموظف
+        } elseif (Auth::guard('store_houses')->check()) {
+            $storehouse = Auth::guard('store_houses')->user();
+            $medicine->store_houses_id = $storehouse->id; // id هنا هو المستودع نفسه
+        } else {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized access']);
         }
-        
-
+    
+        // رفع الصورة إن وجدت
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->move(public_path('DashboardAssets/images'), $imageName);
+            $medicine->image = $imageName;
+        }
+    
         $medicine->save();
-
+    
         return redirect()->route('medicines.index')->with('success', 'Medicine added successfully');
     }
 
@@ -162,7 +172,8 @@ class MedicineController extends Controller
     public function websiteHome()
     {
         // Get all medicines for the website's homepage
-        $medicines = Medicine::with('company', 'category')->get();
+        $medicines = Medicine::with('company', 'category','store_house')->get();
         return view('website.Homepage', compact('medicines'));
+
     }
 }
