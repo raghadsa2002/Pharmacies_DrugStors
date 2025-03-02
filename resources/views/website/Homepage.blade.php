@@ -61,8 +61,9 @@
           <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: auto;">
         </a>
         <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
-        <p class="price">Company: {{ $medicine->company->name }}</p>
-        <p class="price">Category: {{ $medicine->category->name }}</p>
+        <p class="price">الشركة: {{ $medicine->company->name }}</p>
+                        <p class="price">الفئة: {{ $medicine->category->name }}</p>
+                        <p class="price">المستودع: {{ $medicine->storehouse->name }}</p>
         <p class="price">${{ $medicine->price }}</p>
         
         <!-- زر إضافة إلى المفضلة -->

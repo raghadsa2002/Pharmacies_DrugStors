@@ -51,12 +51,12 @@
                     <li><a href="#">Supplements</a></li>
                     <li class="has-children">
                       <a href="#">Vitamins</a>
-                      <ul class="dropdown">
+                      <!-- <ul class="dropdown">
                         <li><a href="#">Supplements</a></li>
                         <li><a href="#">Vitamins</a></li>
                         <li><a href="#">Diet &amp; Nutrition</a></li>
                         <li><a href="#">Tea &amp; Coffee</a></li>
-                      </ul>
+                      </ul> -->
                     </li>
                     <li><a href="#">Diet &amp; Nutrition</a></li>
                     <li><a href="#">Tea &amp; Coffee</a></li>

@@ -27,4 +27,9 @@ class Order extends Model
     {
         return $this->belongsTo(Pharmacy::class, 'pharmacy_id'); 
     }
+
+    public function storehouse()
+{
+    return $this->belongsTo(StoreHouse::class);
+}
 }

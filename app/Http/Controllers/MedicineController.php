@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Medicine;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\StoreHouse;
 use App\Models\PharmaceuticalCompanies;
+use Illuminate\Support\Facades\Auth;
 
 class MedicineController extends Controller
 {
@@ -17,7 +19,8 @@ class MedicineController extends Controller
 
     public function index()
     {
-        $medicines = Medicine::all();
+        // إضافة فلترة الأدوية حسب المستودع الذي يخص المستخدم الحالي
+        $medicines = Medicine::where('store_houses_id', Auth::guard('store_houses')->user()->id)->get();
         
         // إضافة رابط الصورة بشكل صحيح لكل دواء
         foreach ($medicines as $medicine) {
@@ -33,23 +36,28 @@ class MedicineController extends Controller
     {
         $companies = PharmaceuticalCompanies::all();
         $categories = Category::all();
-
-        // فلترة الأدوية حسب الشركة والفئة إذا كانت القيم موجودة
-        $medicines = Medicine::with('company', 'category');
-
-        if ($request->has('company_id') && $request->company_id != '') {
+        $storehouses = \App\Models\StoreHouse::all(); // جلب المستودعات
+    
+        // فلترة الأدوية حسب الشركة والفئة والمستودع
+        $medicines = Medicine::with('company', 'category', 'storehouse');
+    
+        // تطبيق الفلاتر فقط لو تم اختيار قيمة
+        if ($request->filled('company_id')) {
             $medicines = $medicines->where('company_id', $request->company_id);
         }
-
-        if ($request->has('category_id') && $request->category_id != '') {
+    
+        if ($request->filled('category_id')) {
             $medicines = $medicines->where('category_id', $request->category_id);
         }
-
+    
+        if ($request->filled('storehouse_id')) {
+            $medicines = $medicines->where('store_houses_id', $request->storehouse_id);
+        }
+    
         $medicines = $medicines->get();
-
-        return view('website.products', compact('medicines', 'companies', 'categories'));
+    
+        return view('website.products', compact('medicines', 'companies', 'categories', 'storehouses'));
     }
-
     public function create()
     {
         $categories = \App\Models\Category::all();
@@ -82,7 +90,11 @@ class MedicineController extends Controller
             $request->file('image')->move(public_path('DashboardAssets/images'), $imageName); // حفظ الصورة داخل مجلد public/images
             $medicine->image = $imageName; // حفظ اسم الصورة في قاعدة البيانات
         }
-        
+
+        // تحديد المستودع عند إضافة الدواء
+        if (Auth::guard('store_houses')->check()) {
+            $medicine->store_houses_id = Auth::guard('store_houses')->user()->id;
+        }
 
         $medicine->save();
 
@@ -108,7 +120,6 @@ class MedicineController extends Controller
             'category_id' => 'required|exists:categories,id',
             'company_id' => 'required|exists:pharmaceutical_companies,id',
         ]);
-
         $medicine = Medicine::findOrFail($id);
         $medicine->name = $request->name;
         $medicine->price = $request->price;

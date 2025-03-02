@@ -33,6 +33,11 @@ class Medicine extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+
+    public function storehouse()
+{
+    return $this->belongsTo(StoreHouse::class, 'store_houses_id');
+}
     // في نموذج Medicine
 public function pharmaceuticalCompany()
 {

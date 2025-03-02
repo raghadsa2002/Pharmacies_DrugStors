@@ -14,34 +14,39 @@ class OrderController extends Controller
     // عرض الطلبات في صفحة المستودع
     public function index()
     {
-        // استرجاع جميع الطلبات مع تفاصيل الصيدلاني والدواء
-        $orders = Order::with(['pharmacy', 'medicine'])->get();
-        // return dd($orders);
-        // إرجاع العرض مع البيانات
+      // جلب الطلبات الخاصة بالمستودع المسجل الدخول
+$orders = Order::with(['pharmacy', 'medicine'])
+->where('store_houses_id', Auth::guard('store_houses')->user()->id)
+->get();
         return view('orders.index', compact('orders'));
     }
 
     public function store(Request $request)
     {
-        // Auth::guard('pharmacy')->user()->id
-        // return dd();
-        // التحقق من القيم المرسلة
         $request->validate([
             'medicine_id' => 'required|exists:medicines,id',
             'quantity' => 'required|integer|min:1',
         ]);
-    
-        // إنشاء الطلب
+        
+        // تحديد المستودع بناءً على الدواء المطلوب
+        $medicine = Medicine::findOrFail($request->medicine_id);
+        
+        // التأكد من أن الدواء مرتبط بمستودع
+        if (!$medicine->store_houses_id) {
+            return redirect()->back()->with('error', 'This medicine is not available in any storehouse.');
+        }
+        
+        // إنشاء الطلب وتحديد المستودع الصحيح
         $order = new Order();
         $order->pharmacy_id = Auth::guard('pharmacy')->user()->id;
         $order->medicine_id = $request->medicine_id;
+        $order->store_houses_id = $medicine->store_houses_id; // ربط الطلب بالمستودع المناسب
         $order->quantity = $request->quantity;
         $order->status = 'Pending';
         $order->save();
-    
+        
         return redirect()->back()->with('success', 'Order placed successfully!');
     }
-        
     
     // تحديث حالة الطلب (مقبول، مرفوض، انتظار)
     public function updateStatus(Request $request, $id)

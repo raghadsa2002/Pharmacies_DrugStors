@@ -8,27 +8,41 @@
             </div>
         </div>
 
-        <!-- Search Form -->
-        <form method="GET" action="{{ route('medicines.products') }}">
-            @csrf
-            <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 20px;">
-                <select name="company_id" required>
-                    <option value="">-- Select Company --</option>
-                    @foreach ($companies as $company)
-                        <option value="{{ $company->id }}">{{ $company->name }}</option>
-                    @endforeach
-                </select>
+<!-- Search Form -->
+<form method="GET" action="{{ route('medicines.products') }}">
+    @csrf
+    <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 20px;">
+        
+        <select name="company_id">
+            <option value="">-- Select Company --</option>
+            @foreach ($companies as $company)
+                <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                    {{ $company->name }}
+                </option>
+            @endforeach
+        </select>
 
-                <select name="category_id" required>
-                    <option value="">-- Select Category --</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+        <select name="category_id">
+            <option value="">-- Select Category --</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
 
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-        </form>
+        <select name="storehouse_id">
+            <option value="">Select Storehouse</option>
+            @foreach($storehouses as $storehouse)
+                <option value="{{ $storehouse->id }}" {{ request('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
+                    {{ $storehouse->name }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
 
         <!-- Display Medicines -->
         @if(isset($medicines) && $medicines->count() > 0)
@@ -40,8 +54,10 @@
                             <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: auto;">
                         </a>
                         <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
-                        <p class="price">Company: {{ $medicine->company->name }}</p>
-                        <p class="price">Category: {{ $medicine->category->name }}</p>
+                        <p class="price">الشركة: {{ $medicine->company->name }}</p>
+                        <p class="price">الفئة: {{ $medicine->category->name }}</p>
+                        <p class="price">المستودع: {{ $medicine->storehouse->name }}</p>
+
                         <p class="price">
                             <del></del> &mdash; ${{ $medicine->price }}<br>
                             <button class="btn btn-primary px-4 py-3 order-now" data-medicine-id="{{ $medicine->id }}" data-medicine-name="{{ $medicine->name }}">Order Now</button>
