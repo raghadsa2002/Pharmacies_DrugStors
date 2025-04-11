@@ -39,7 +39,7 @@ class EmployeeController extends Controller
 
     // جلب المستودع الخاص بالمستخدم الحالي وإضافته تلقائياً
     $validated['storehouse_id'] = Auth::guard('store_houses')->user()->id;
-    $validated['password'] = bcrypt($request->password); // تشفير الباسورد
+    $validated['password'] = bcrypt($request->password); 
 
     Employee::create($validated);
 

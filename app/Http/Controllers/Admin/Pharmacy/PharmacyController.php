@@ -50,7 +50,8 @@ class PharmacyController extends Controller
         $ifExists = Pharmacy::where('email', $validatedData['email'])->first();
         if ($ifExists) {
             return redirect()->back()->with('error_message', 'Pharmacy Already Exists Write Another Email');
-        } else {
+        } else 
+        {
             Pharmacy::create([
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],

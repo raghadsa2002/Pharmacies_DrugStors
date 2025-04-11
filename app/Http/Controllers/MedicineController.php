@@ -19,13 +19,13 @@ class MedicineController extends Controller
 
     public function index()
     {
-        // إضافة فلترة الأدوية حسب المستودع الذي يخص المستخدم الحالي
+       
         $medicines = Medicine::where('store_houses_id', Auth::guard('store_houses')->user()->id)->get();
         
-        // إضافة رابط الصورة بشكل صحيح لكل دواء
+       
         foreach ($medicines as $medicine) {
             if ($medicine->image) {
-                $medicine->image_url = asset('storage/images/' . $medicine->image); // رابط الصورة
+                $medicine->image_url = asset('storage/images/' . $medicine->image); 
             }
         }
         
@@ -36,12 +36,11 @@ class MedicineController extends Controller
     {
         $companies = PharmaceuticalCompanies::all();
         $categories = Category::all();
-        $storehouses = \App\Models\StoreHouse::all(); // جلب المستودعات
+        $storehouses = \App\Models\StoreHouse::all();
     
-        // فلترة الأدوية حسب الشركة والفئة والمستودع
+     
         $medicines = Medicine::with('company', 'category', 'storehouse');
     
-        // تطبيق الفلاتر فقط لو تم اختيار قيمة
         if ($request->filled('company_id')) {
             $medicines = $medicines->where('company_id', $request->company_id);
         }
@@ -88,10 +87,10 @@ class MedicineController extends Controller
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension(); // اسم فريد للصورة
             $request->file('image')->move(public_path('DashboardAssets/images'), $imageName); // حفظ الصورة داخل مجلد public/images
-            $medicine->image = $imageName; // حفظ اسم الصورة في قاعدة البيانات
+            $medicine->image = $imageName; 
         }
 
-        // تحديد المستودع عند إضافة الدواء
+        
         if (Auth::guard('store_houses')->check()) {
             $medicine->store_houses_id = Auth::guard('store_houses')->user()->id;
         }
@@ -129,11 +128,10 @@ class MedicineController extends Controller
         $medicine->company_id = $request->company_id;
         $medicine->description = $request->description;
 
-        // إضافة صورة جديدة للدواء إذا كانت موجودة
         if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension(); // اسم فريد للصورة
-            $request->file('image')->move(public_path('DashboardAssets/images'), $imageName); // حفظ الصورة داخل مجلد public/images
-            $medicine->image = $imageName; // تحديث اسم الصورة في قاعدة البيانات
+            $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $request->file('image')->move(public_path('DashboardAssets/images'), $imageName); 
+            $medicine->image = $imageName; 
         }
 
         $medicine->save();
