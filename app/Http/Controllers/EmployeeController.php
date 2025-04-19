@@ -59,7 +59,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email,' . $id,
             'phone' => 'required|string|max:15',
             'address' => 'nullable|string',
-            'storehouse_id' => 'required|exists:store_houses,id',
+            // 'storehouse_id' => 'required|exists:store_houses,id',
         ]);
 
         $employee = Employee::findOrFail($id);

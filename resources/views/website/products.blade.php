@@ -8,11 +8,9 @@
             </div>
         </div>
 
-<!-- Search Form -->
-<form method="GET" action="{{ route('medicines.products') }}">
+        <form method="GET" action="{{ route('medicines.products') }}">
     @csrf
     <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 20px;">
-        
         <select name="company_id">
             <option value="">-- Select Company --</option>
             @foreach ($companies as $company)
@@ -32,8 +30,8 @@
         </select>
 
         <select name="storehouse_id">
-            <option value="">Select Storehouse</option>
-            @foreach($storehouses as $storehouse)
+            <option value="">-- Select Storehouse --</option>
+            @foreach ($storehouses as $storehouse)
                 <option value="{{ $storehouse->id }}" {{ request('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
                     {{ $storehouse->name }}
                 </option>
@@ -54,6 +52,7 @@
                         <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: 200px; object-fit: cover;">
                         </a>
                         <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
+<<<<<<< HEAD
                         <p class="price">الشركة: {{ $medicine->company?->name ?? 'غير محددة' }}</p>
 <p class="price">الفئة: {{ $medicine->category?->name ?? 'غير محددة' }}</p>
 <p class="price">المستودع: {{ $medicine->storehouse?->name ?? 'غير محددة' }}</p>
@@ -69,6 +68,14 @@
 
 <!-- زر الطلب -->
 <button class="btn btn-primary px-4 py-3 order-now" data-medicine-id="{{ $medicine->id }}" data-medicine-name="{{ $medicine->name }}">Order Now</button>
+=======
+                        <p class="price">الشركة: {{ $medicine->company->name }}</p>
+                        <p class="price">الفئة: {{ $medicine->category->name }}</p>
+                        <p class="price">المستودع: {{ $medicine->storehouse->name }}</p>
+                        <p class="price">
+                            <del></del> &mdash; ${{ $medicine->price }}<br>
+                            <button class="btn btn-primary px-4 py-3 order-now" data-medicine-id="{{ $medicine->id }}" data-medicine-name="{{ $medicine->name }}">Order Now</button>
+>>>>>>> 7711000508946464d14d323bd71ca2e6c88b3c83
                         </p>
                         <span 
   class="favorite-icon" 

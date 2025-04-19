@@ -74,7 +74,7 @@ class MedicineController extends Controller
             'category_id' => 'required|exists:categories,id',
             'company_id' => 'required|exists:pharmaceutical_companies,id',
         ]);
-
+    
         $medicine = new Medicine();
         $medicine->name = $request->name;
         $medicine->price = $request->price;
@@ -96,7 +96,7 @@ class MedicineController extends Controller
         }
 
         $medicine->save();
-
+    
         return redirect()->route('medicines.index')->with('success', 'Medicine added successfully');
     }
 
@@ -150,7 +150,8 @@ class MedicineController extends Controller
     public function websiteHome()
     {
         // Get all medicines for the website's homepage
-        $medicines = Medicine::with('company', 'category')->get();
+        $medicines = Medicine::with('company', 'category','store_house')->get();
         return view('website.Homepage', compact('medicines'));
+
     }
 }

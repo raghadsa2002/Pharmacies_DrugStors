@@ -27,6 +27,7 @@ class Order extends Model
         return $this->belongsTo(Medicine::class);
     }
 
+   
     public function pharmacy()
     {
         return $this->belongsTo(Pharmacy::class, 'pharmacy_id'); 

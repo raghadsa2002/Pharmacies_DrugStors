@@ -14,10 +14,13 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['pharmacy', 'medicine1', 'medicine2'])
-            ->where('store_houses_id', Auth::guard('store_houses')->user()->id)
-            ->get();
-    
+        // استرجاع جميع الطلبات مع تفاصيل الصيدلاني والدواء
+        $storehouseId = Auth::guard('store_houses')->user()->id;
+        $orders = Order::whereHas('medicine', function ($query) use ($storehouseId) {
+            $query->where('store_houses_id', $storehouseId);
+        })->with(['pharmacy', 'medicine'])->get();
+        // return dd($orders);
+        // إرجاع العرض مع البيانات
         return view('orders.index', compact('orders'));
     }
 

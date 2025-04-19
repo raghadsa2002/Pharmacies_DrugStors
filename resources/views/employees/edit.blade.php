@@ -73,7 +73,19 @@
                                                 value="{{ old('address', $employee->address) }}" placeholder="Enter address">
                                         </div>
 
-                                     
+                                        <!-- Storehouse -->
+                                        <!-- <div class="form-group">
+                                            <label for="storehouse">Storehouse</label>
+                                            <select class="form-control" id="storehouse" name="storehouse_id">
+                                                <option value="" disabled>Select a storehouse</option>
+                                                @foreach($storehouses as $storehouse)
+                                                    <option value="{{ $storehouse->id }}" 
+                                                        {{ old('storehouse_id', $employee->storehouse_id) == $storehouse->id ? 'selected' : '' }}>
+                                                        {{ $storehouse->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div> -->
 
                                         <button type="submit" class="btn btn-primary mr-2">Save</button>
                                         <a href="{{ route('employees.index') }}" class="btn btn-light">Cancel</a>
