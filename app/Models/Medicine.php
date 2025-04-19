@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Medicine;
+use App\Models\StoreHouse;
 use App\Models\PharmaceuticalCompanies;
 
 class Medicine extends Model
@@ -41,10 +43,6 @@ class Medicine extends Model
     }
 
 
-    public function storehouse()
-{
-    return $this->belongsTo(StoreHouse::class, 'store_houses_id');
-}
     // في نموذج Medicine
 public function pharmaceuticalCompany()
 {
@@ -60,4 +58,7 @@ public function orders()
 {
     return $this->hasOne(Discount::class);
 }
+
+
+
 }
