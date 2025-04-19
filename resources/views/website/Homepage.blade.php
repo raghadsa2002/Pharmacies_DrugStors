@@ -58,13 +58,19 @@
       <div class="col-sm-6 col-lg-4 text-center item mb-4">
         <span class="tag">{{ $medicine->name }}</span>
         <a href="shop-single.html">
-          <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: auto;">
+        <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: 200px; object-fit: cover;">
         </a>
         <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
-        <p class="price">الشركة: {{ $medicine->company->name }}</p>
-                        <p class="price">الفئة: {{ $medicine->category->name }}</p>
-                        <p class="price">المستودع: {{ $medicine->storehouse->name }}</p>
-        <p class="price">${{ $medicine->price }}</p>
+        <p class="price">الشركة: {{ $medicine->company?->name ?? 'غير محددة' }}</p>
+<p class="price">الفئة: {{ $medicine->category?->name ?? 'غير محددة' }}</p>
+<p class="price">المستودع: {{ $medicine->storehouse?->name ?? 'غير محددة' }}</p>
+@if($medicine->discount)
+  <p class="text-muted"><del>${{ $medicine->price }}</del></p>
+  <p class="text-danger">${{ $medicine->discount->discounted_price }}</p>
+@else
+  <p class="text-muted" style="visibility: hidden;"><del>--</del></p>
+  <p>${{ $medicine->price }}</p>
+@endif
         
         <!-- زر إضافة إلى المفضلة -->
       <span 

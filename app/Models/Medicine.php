@@ -47,4 +47,10 @@ public function orders()
     {
         return $this->hasMany(Order::class);
     }
+
+ 
+    public function discount()
+{
+    return $this->hasOne(Discount::class);
+}
 }

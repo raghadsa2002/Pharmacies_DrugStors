@@ -41,11 +41,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($medicines as $order)
+                    @foreach($orders as $order)
                     <tr>
                         <td>{{ $order->id }}</td>
-                        <td>{{ $order->pharmacy->name }}</td>
-                        <td>{{ $order->medicine->name }}</td>
+                        <td>{{ $order->pharmacy->name ?? 'Unknown Pharmacy' }}</td>
+                        <td>
+    @if ($order->offer && $order->offer->title)
+        {{ $order->offer->title }}
+    @elseif ($order->medicine && $order->medicine->name)
+        {{ $order->medicine->name }}
+    @else
+        <span class="text-danger fw-bold">Invalid Order</span>
+    @endif
+</td>
                         <td>{{ $order->quantity }}</td>
                         <td>{{ $order->status }}</td>
                     </tr>

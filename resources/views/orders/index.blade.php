@@ -19,7 +19,6 @@
         @include('layouts.Admin.Header')  <!-- هيدر الصفحة -->
 
         <div class="container-fluid page-body-wrapper">
-         <!-- @include('layouts.Admin.Setting') -->  <!-- إعدادات الشريط الجانبي -->
             @include('layouts.Admin.Sidebar')  <!-- الشريط الجانبي نفسه -->
 
             <div class="main-panel">
@@ -28,59 +27,69 @@
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">Medicines List</h4>
+                                    <h4 class="card-title">Order List</h4>
 
-                                    
                                     @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                     @endif
 
                                     <!-- جدول عرض البيانات -->
                                     <div class="table-responsive">
                                         <table class="table">
-                                        <thead>
-    <tr>
-    <th>Order ID</th>
-                <th>Pharmacy Name</th>
-                <th>Medicine Name</th>
-                <th>Quantity</th>
-                <th>Status</th>
-    </tr>
-</thead>
-<tbody>
-@foreach($orders as $order)
-                <tr>
-                    <td>{{ $order->id }}</td>
-                    <td>{{ $order->pharmacy->name }}</td>
-                    <td>{{ $order->medicine->name }}</td>
-                    <td>{{ $order->quantity }}</td>
-                    <td>
-                    @if($order->status != 'Pending')
-                        {{ $order->status }}
-                    @endif
-                        @if($order->status == 'Pending')
-                        <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
-                            @csrf
-                            @method('POST')
-                            <select name="status" class="form-control">
-                                <option value="approved" {{ $order->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary mt-2">Update Status</button>
-                        </form>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-</tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th>Order ID</th>
+                                                    <th>Pharmacy Name</th>
+                                                    <th>Medicine Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($orders as $order)
+                                                    <tr>
+                                                        <td>{{ $order->id }}</td>
+                                                        <td>{{ optional($order->pharmacy)->name ?? 'غير موجود' }}</td>
+                                                        <td>
+                                                            @if ($order->offer)
+                                                                {{ 'عرض: ' . ($order->offer->title ?? 'بدون اسم') }}
+                                                            @elseif ($order->medicine)
+                                                                {{ $order->medicine->name }}
+                                                            @elseif ($order->medicine1 || $order->medicine2)
+                                                                {{ 'عرض بين: ' . optional($order->medicine1)->name . ' و ' . optional($order->medicine2)->name }}
+                                                            @else
+                                                                غير موجود
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $order->quantity }}</td>
+                                                        <td>
+                                                            @if($order->status != 'Pending')
+                                                                {{ $order->status }}
+                                                                @endif
+                                                            @if($order->status == 'Pending')
+                                                                <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('POST')
+                                                                    <select name="status" class="form-control">
+                                                                        <option value="approved" {{ $order->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                                                        <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                                                    </select>
+                                                                    <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+                                                                </form>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
                                         </table>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -98,7 +107,7 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
+    <script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function (event) {
                 event.preventDefault(); // Prevent form submission

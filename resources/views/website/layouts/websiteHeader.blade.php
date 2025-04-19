@@ -48,9 +48,11 @@
           <div class="main-nav d-none d-lg-block">
             <nav class="site-navigation text-right text-md-center" role="navigation">
               <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li class="active"><a href="homePage">Home</a></li>
+               
+                <li><a href="{{route('homePage')}}">HOME</a></li>
                 <li><a href="{{route('products')}}">Products</a></li>
                 <li><a href="{{ route('favorites') }}"><i class="fas fa-heart"></i>My Favorites</a></li>
+                <li><a href="{{ route('orders.pharmacyOffers') }}"><i class="fas fa-heart"></i>offers</a></li>
                 <li class="has-children">
                   
                   

@@ -6,18 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('storehouse_id')->after('medicine_id')->constrained('store_houses')->onDelete('cascade');
+            $table->unsignedBigInteger('medicine_id_1')->nullable();
+            $table->unsignedBigInteger('medicine_id_2')->nullable();
         });
     }
-    
+
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign(['storehouse_id']);
-            $table->dropColumn('storehouse_id');
+            $table->dropColumn(['medicine_id_1', 'medicine_id_2']);
         });
     }
 };
