@@ -78,6 +78,7 @@ class OrderController extends Controller
     {
         $orders = Order::where('pharmacy_id', Auth::guard('pharmacy')->user()->id)
             ->with(['medicine', 'offer']) // جلب العلاقة مع الدواء والعرض لو احتجتيهم
+            ->latest()
             ->get();
     
         return view('orders.pharmacy_index', compact('orders'));
