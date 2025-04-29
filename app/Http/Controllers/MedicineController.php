@@ -114,7 +114,7 @@ class MedicineController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            
             'status' => 'required',
             'category_id' => 'required|exists:categories,id',
             'company_id' => 'required|exists:pharmaceutical_companies,id',
@@ -122,7 +122,7 @@ class MedicineController extends Controller
         $medicine = Medicine::findOrFail($id);
         $medicine->name = $request->name;
         $medicine->price = $request->price;
-        $medicine->stock = $request->stock;
+       
         $medicine->status = $request->status;
         $medicine->category_id = $request->category_id;
         $medicine->company_id = $request->company_id;

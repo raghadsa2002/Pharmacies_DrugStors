@@ -18,7 +18,9 @@ class OrderController extends Controller
         $storehouseId = Auth::guard('store_houses')->user()->id;
         $orders = Order::whereHas('medicine', function ($query) use ($storehouseId) {
             $query->where('store_houses_id', $storehouseId);
-        })->with(['pharmacy', 'medicine'])->get();
+        })->with(['pharmacy', 'medicine'])
+        ->orderBy('created_at','desc')
+        ->get();
         // return dd($orders);
         // إرجاع العرض مع البيانات
         return view('orders.index', compact('orders'));
@@ -55,18 +57,43 @@ class OrderController extends Controller
     }
     
     public function updateStatus(Request $request, $id)
-    {
-        $order = Order::findOrFail($id);
-       
-        $request->validate([
-            'status' => 'required|in:pending,approved,rejected',
+{
+    $order = Order::findOrFail($id);
+
+    $request->validate([
+        'status' => 'required|in:pending,approved,rejected',
+    ]);
+
+    // إذا الحالة جديدة "approved" ننفذ عمليات الخصم والتخزين
+    if ($request->status === 'approved') {
+        $medicine = Medicine::findOrFail($order->medicine_id);
+
+        // تحقق من الكمية
+        if ($medicine->stock < $order->quantity) {
+            return redirect()->back()->with('error', 'Cannot approve this order. The requested quantity exceeds the available stock');
+        }
+
+        // خصم الكمية
+        $previousStock = $medicine->stock;
+        $medicine->stock -= $order->quantity;
+        $medicine->save();
+
+        // حفظ حركة المخزون
+        \App\Models\StockMovement::create([
+            'medicine_id' => $medicine->id,
+            'type' => 'decrease',
+            'quantity' => $order->quantity,
+            'previous_stock' => $previousStock,
+            'new_stock' => $medicine->stock,
         ]);
-
-        $order->status = $request->status;
-        $order->save();
-
-        return redirect()->route('orders.index')->with('success', 'Order status updated successfully!');
     }
+
+    // تحديث الحالة
+    $order->status = $request->status;
+    $order->save();
+
+    return redirect()->route('orders.index')->with('success', 'تم تحديث حالة الطلب بنجاح.');
+}
 
     public function create()
     {
@@ -122,4 +149,37 @@ class OrderController extends Controller
         // إرجاع النجاح
         return redirect()->route('orders.pharmacyOffers')->with('success', 'تم إرسال الطلب بنجاح');
     }
+
+    public function approveOrder($orderId)
+{
+    // استرجاع الطلب بناءً على ID
+    $order = Order::findOrFail($orderId);
+
+    // الحصول على الأدوية في الطلب
+    $medicine = Medicine::findOrFail($order->medicine_id);
+
+    // التحقق من المخزون
+    if ($medicine->stock < $order->quantity) {
+        return redirect()->back()->with('error', 'Not enough stock available for this order.');
+    }
+
+    // تقليص الكمية من المخزون
+    $medicine->stock -= $order->quantity;
+    $medicine->save();
+
+    // تحديث حالة الطلب
+    $order->status = 'approved'; // تحديث حالة الطلب إلى "موافق عليه"
+    $order->save();
+
+    // تسجيل حركة المخزون
+    StockMovement::create([
+        'medicine_id' => $medicine->id,
+        'type' => 'decrease',
+        'quantity' => $order->quantity,
+        'previous_stock' => $medicine->stock + $order->quantity, // القيمة قبل التغيير
+        'new_stock' => $medicine->stock,
+    ]);
+
+    return redirect()->back()->with('success', 'Order approved and stock updated.');
+}
 }

@@ -48,10 +48,7 @@
                                         </div>
 
                                        
-                                        <div class="form-group">
-                                            <label for="stock">Stock</label>
-                                            <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock', $medicine->stock) }}" placeholder="Stock Quantity" required>
-                                        </div>
+                                        
 
                                         
                                         <div class="form-group">

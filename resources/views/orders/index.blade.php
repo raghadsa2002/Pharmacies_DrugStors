@@ -29,6 +29,11 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Order List</h4>
 
+                                    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
                                     @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul>
@@ -41,53 +46,53 @@
 
                                     <!-- جدول عرض البيانات -->
                                     <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Order ID</th>
-                                                    <th>Pharmacy Name</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Quantity</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($orders as $order)
-                                                    <tr>
-                                                        <td>{{ $order->id }}</td>
-                                                        <td>{{ optional($order->pharmacy)->name ?? 'غير موجود' }}</td>
-                                                        <td>
-                                                            @if ($order->offer)
-                                                                {{ 'عرض: ' . ($order->offer->title ?? 'بدون اسم') }}
-                                                            @elseif ($order->medicine)
-                                                                {{ $order->medicine->name }}
-                                                            @elseif ($order->medicine1 || $order->medicine2)
-                                                                {{ 'عرض بين: ' . optional($order->medicine1)->name . ' و ' . optional($order->medicine2)->name }}
-                                                            @else
-                                                                غير موجود
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ $order->quantity }}</td>
-                                                        <td>
-                                                            @if($order->status != 'Pending')
-                                                                {{ $order->status }}
-                                                                @endif
-                                                            @if($order->status == 'Pending')
-                                                                <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('POST')
-                                                                    <select name="status" class="form-control">
-                                                                        <option value="approved" {{ $order->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                                                        <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                                                    </select>
-                                                                    <button type="submit" class="btn btn-primary mt-2">Update Status</button>
-                                                                </form>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                    <table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Pharmacy Name</th>
+            <th>Medicine Name</th>
+            <th>Quantity</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($orders as $order)
+            <tr>
+                <td>{{ $order->id }}</td>
+                <td>{{ optional($order->pharmacy)->name ?? 'غير موجود' }}</td>
+                <td>
+                    @if ($order->offer)
+                        {{ 'عرض: ' . ($order->offer->title ?? 'بدون اسم') }}
+                    @elseif ($order->medicine)
+                        {{ $order->medicine->name }}
+                    @elseif ($order->medicine1 || $order->medicine2)
+                        {{ 'عرض بين: ' . optional($order->medicine1)->name . ' و ' . optional($order->medicine2)->name }}
+                    @else
+                        غير موجود
+                    @endif
+                </td>
+                <td>{{ $order->quantity }}</td>
+                <td>
+                    @if($order->status != 'Pending')
+                        {{ $order->status }}
+                    @endif
+                    @if($order->status == 'Pending')
+                        <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
+                            @csrf
+                            @method('POST')
+                            <select name="status" class="form-control">
+                                <option value="approved" {{ $order->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="rejected" {{ $order->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+                        </form>
+                    @endif
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
                                     </div>
 
                                 </div>

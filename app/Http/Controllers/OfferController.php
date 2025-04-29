@@ -56,9 +56,9 @@ class OfferController extends Controller
                 'end_date' => $request->end_date,
             ]);
 
-            return redirect()->route('offers.index')->with('success', 'تم إضافة العرض بنجاح.');
+            return redirect()->route('offers.index')->with('success', 'The offer has been successfully added');
         } catch (\Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء إضافة العرض: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while adding the offer: ' . $e->getMessage());
         }
     }
 
@@ -96,7 +96,7 @@ class OfferController extends Controller
             'end_date' => $request->end_date,
         ]);
 
-        return redirect()->route('offers.index')->with('success', 'تم تعديل العرض بنجاح.');
+        return redirect()->route('offers.index')->with('success', 'The offer has been successfully updated');
     }
 
     // حذف العرض
@@ -106,6 +106,6 @@ class OfferController extends Controller
         $offer = Offer::where('store_houses_id', $storeHouseId)->findOrFail($id);
         $offer->delete();
 
-        return redirect()->route('offers.index')->with('success', 'تم حذف العرض بنجاح.');
+        return redirect()->route('offers.index')->with('success', 'The offer has been deleted successfully ');
     }
 }

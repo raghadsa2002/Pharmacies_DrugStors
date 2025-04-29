@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PharmacistOfferController;
+use App\Http\Controllers\StockManagementController;
 
 Route::get('/', function () {
     return redirect()->route('admin.login');
@@ -54,12 +55,20 @@ Route::middleware(['auth:store_houses'])->group(function () {
 
 
 Route::get('/orders/pharmacy-offers', [PharmacistOfferController::class, 'index'])->name('orders.pharmacyOffers');
-//Route::post('/offers/order/{offerId}', [PharmacistOfferController::class, 'order'])->name('offers.order');
-Route::post('/offers/{offer}/order', [OrderController::class, 'createOrder'])->name('offers.order');
-// Route::middleware(['auth:pharmacy'])->group(function () {
-//     Route::get('/pharmacy/offers', [PharmacistOfferController::class, 'index'])->name('pharmacist.offers.index');
-//     Route::post('/pharmacy/offers/{offer}/order', [PharmacistOfferController::class, 'order'])->name('pharmacist.offers.order');
 
+Route::post('/offers/{offer}/order', [OrderController::class, 'createOrder'])->name('offers.order');
+
+
+
+
+
+Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
+
+// تحديث الكمية
+Route::put('/stock/update/{id}', [StockManagementController::class, 'updateStock'])->name('stock.update');
+
+// موافقة على الطلب
+Route::put('/order/approve/{id}', [OrderController::class, 'approveOrder'])->name('order.approve');
 
 
 
