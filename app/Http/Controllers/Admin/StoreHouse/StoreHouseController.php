@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\StoreHouse;
 
+use App\Models\Review;
 use App\Http\Controllers\Controller;
 use App\Models\StoreHouse;
 use Illuminate\Http\Request;
@@ -151,4 +152,11 @@ class StoreHouseController extends Controller
 
         return redirect()->route('admin.storeHouse.index')->with('success_message', 'Store House Restored Successfully');
     }
+
+    public function showReviews()
+    {
+        $reviews = Review::with('pharmacy')->get();
+        return view('admin.storeHouse.review', compact('reviews'));
+    }
+
 }

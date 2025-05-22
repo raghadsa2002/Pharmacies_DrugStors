@@ -105,7 +105,7 @@
         <button type="button" class="btn btn-secondary close-modal">Cancel</button>
         <button type="submit" class="btn btn-primary">Send</button>
     </div>
-</form>
+    </form>
     </div>
 </div>
 

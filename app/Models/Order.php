@@ -52,4 +52,9 @@ public function medicine2()
 {
     return $this->belongsTo(Medicine::class, 'medicine_id_2');
 }
+
+public function review()
+{
+    return $this->hasOne(Review::class);
+}
 }

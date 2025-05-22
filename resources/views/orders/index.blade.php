@@ -60,7 +60,7 @@
         @foreach($orders as $order)
             <tr>
                 <td>{{ $order->id }}</td>
-                <td>{{ optional($order->pharmacy)->name ?? 'غير موجود' }}</td>
+                <td>{{ $order->pharmacy?->name ?? 'غير معروف' }}</td>  
                 <td>
                     @if ($order->offer)
                         {{ 'عرض: ' . ($order->offer->title ?? 'بدون اسم') }}

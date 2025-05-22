@@ -9,8 +9,9 @@ use App\Models\Category;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PharmacistOfferController;
+use App\Http\Controllers\Admin\StoreHouse\StoreHouseController;
 use App\Http\Controllers\StockManagementController;
-
+use App\Http\Controllers\ReviewController;
 Route::get('/', function () {
     return redirect()->route('admin.login');
 });
@@ -87,6 +88,14 @@ Route::post('orders/update-status/{id}', [OrderController::class, 'updateStatus'
 
 Route::get('/pharmacy/orders', [OrderController::class, 'pharmacyOrders'])->name('pharmacy.orders');
 
+Route::post('/pharmacy/orders/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+
+
+Route::get('/admin/reviews', [ReviewController::class, ' Index'])->name('admin.reviews');
+
+Route::get('/storHouse/reviews', [StoreHouseController::class, 'showReviews'])->name('storHouse.reviews');
 
 Route::get('/favorites', function () {
     return view('favorites');
