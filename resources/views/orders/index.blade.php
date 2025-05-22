@@ -28,6 +28,57 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h4 class="card-title">Order List</h4>
+                                    <form method="GET" action="{{ route('orders.index') }}" class="mb-4">
+    <div class="row">
+        <!-- Pharmacy filter -->
+        <div class="col-md-3">
+            <label>Pharmacy</label>
+            <select name="pharmacy_id" class="form-control">
+                <option value="">All</option>
+                @foreach($pharmacies as $pharmacy)
+                    <option value="{{ $pharmacy->id }}" {{ request('pharmacy_id') == $pharmacy->id ? 'selected' : '' }}>
+                        {{ $pharmacy->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Medicine filter -->
+        <div class="col-md-3">
+            <label>Medicine</label>
+            <select name="medicine_id" class="form-control">
+                <option value="">All</option>
+                @foreach($medicines as $medicine)
+                    <option value="{{ $medicine->id }}" {{ request('medicine_id') == $medicine->id ? 'selected' : '' }}>
+                        {{ $medicine->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Status filter -->
+        <div class="col-md-2">
+            <label>Status</label>
+            <select name="status" class="form-control">
+                <option value="">All</option>
+                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+            </select>
+        </div>
+
+       
+
+        
+      <!-- Search button -->
+<div class="col-md-2">
+    <label style="visibility: hidden;">Search</label>
+    <button type="submit" class="btn btn-primary w-100">Search</button>
+</div>
+
+       
+    </div>
+</form>
 
                                     @if (session('error'))
     <div class="alert alert-danger">
@@ -93,6 +144,10 @@
         @endforeach
     </tbody>
 </table>
+
+<div class="pagination">
+        {{ $orders->appends(request()->query())->links('pagination::bootstrap-4') }}  <!-- هذا يعرض روابط البيجينيشن -->
+    </div>
                                     </div>
 
                                 </div>

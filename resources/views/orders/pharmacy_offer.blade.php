@@ -27,7 +27,7 @@
 
         .card:hover {
             transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(25, 155, 133, 0.1);
         }
 
         .card-color-1 { background-color:rgb(248, 243, 243); }
@@ -113,7 +113,7 @@
                     </p>
 
                     <p class="card-text text-center">
-                        <strong>Discounted Price:</strong>
+                        <strong>offer Price:</strong>
                         <span style="color: #27ae60; font-weight: bold;">${{ number_format($discounted_price, 2) }}</span>
                     </p>
 

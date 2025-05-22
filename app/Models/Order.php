@@ -34,9 +34,9 @@ class Order extends Model
     }
 
     public function storehouse()
-{
-    return $this->belongsTo(StoreHouse::class);
-}
+    {
+        return $this->belongsTo(StoreHouse::class, 'store_houses_id');
+    }
 
 public function offer()
 {

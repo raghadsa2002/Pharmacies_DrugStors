@@ -12,6 +12,9 @@ use App\Http\Controllers\PharmacistOfferController;
 use App\Http\Controllers\Admin\StoreHouse\StoreHouseController;
 use App\Http\Controllers\StockManagementController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\StorehouseReportsController;
+
+
 Route::get('/', function () {
     return redirect()->route('admin.login');
 });
@@ -103,3 +106,19 @@ Route::get('/favorites', function () {
 require __DIR__.'/auth.php';
 
 
+
+//التقارير
+use App\Http\Controllers\ReportController;
+
+
+Route::prefix('pharmacy/reports')->middleware('auth:pharmacy')->group(function () {
+    Route::get('/', [ReportController::class, 'pharmacyReports'])->name('reports.pharmacy.index');
+
+
+
+
+
+Route::middleware(['auth:store_houses'])->prefix('storehouse')->group(function () {
+    Route::get('/reports', [StorehouseReportsController::class, 'index'])->name('storehouse.reports');
+});
+});
