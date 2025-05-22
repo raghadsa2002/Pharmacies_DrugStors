@@ -53,6 +53,7 @@
                 <li><a href="{{route('products')}}">Products</a></li>
                 <li><a href="{{ route('favorites') }}"><i class="fas fa-heart"></i>My Favorites</a></li>
                 <li><a href="{{ route('orders.pharmacyOffers') }}"><i class="fas fa-heart"></i>offers</a></li>
+                <a href="{{ route('reports.pharmacy.index') }}">Reports</a>
                 <li class="has-children">
                   
                   

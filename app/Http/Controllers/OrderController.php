@@ -9,22 +9,45 @@ use App\Models\Offer;
 use App\Models\StoreHouse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Notifications\LowStockNotification;
 
 class OrderController extends Controller
 {
-    public function index()
-    {
-        // استرجاع جميع الطلبات مع تفاصيل الصيدلاني والدواء
-        $storehouseId = Auth::guard('store_houses')->user()->id;
-        $orders = Order::whereHas('medicine', function ($query) use ($storehouseId) {
-            $query->where('store_houses_id', $storehouseId);
-        })->with(['pharmacy', 'medicine'])
-        ->orderBy('created_at','desc')
-        ->get();
-        // return dd($orders);
-        // إرجاع العرض مع البيانات
-        return view('orders.index', compact('orders'));
+    public function index(Request $request)
+{
+    $storehouseId = Auth::guard('store_houses')->user()->id;
+
+    // استعلام الطلبات الأساسي
+    $orders = Order::whereHas('medicine', function ($query) use ($storehouseId) {
+        $query->where('store_houses_id', $storehouseId);
+    });
+
+    // الفلاتر
+    if ($request->filled('status')) {
+        $orders->where('status', $request->status);
     }
+
+    if ($request->filled('pharmacy_id')) {
+        $orders->where('pharmacy_id', $request->pharmacy_id);
+    }
+
+    if ($request->filled('medicine_id')) {
+        $orders->where('medicine_id', $request->medicine_id)
+               ->whereNull('offer_id'); // نتأكد إنها مو عرض
+    }
+
+    // جلب البيانات مع العلاقات والترتيب والبيجينيشن
+    $orders = $orders->with(['pharmacy', 'medicine'])
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    $pharmacies = Pharmacy::all();
+    $medicines = Medicine::where('store_houses_id', $storehouseId)->get();
+
+    return view('orders.index', compact('orders', 'pharmacies', 'medicines'));
+}
+
+  
 
     public function store(Request $request)
     {
@@ -86,6 +109,10 @@ class OrderController extends Controller
             'previous_stock' => $previousStock,
             'new_stock' => $medicine->stock,
         ]);
+        // check if stock less than 50 
+        // if($medicine->stock < 50) {
+        //     $user->notify(new LowStockNotification(['medican' => medican name, 'stock' => 'stock current be ' .$medicine->stock ]));
+        // }
     }
 
     // تحديث الحالة
@@ -101,14 +128,46 @@ class OrderController extends Controller
         return view('orders.create', compact('medicines'));
     }
 
-    public function pharmacyOrders()
+    public function pharmacyOrders(Request $request)
     {
-        $orders = Order::where('pharmacy_id', Auth::guard('pharmacy')->user()->id)
-            ->with(['medicine', 'offer']) // جلب العلاقة مع الدواء والعرض لو احتجتيهم
-            ->latest()
-            ->get();
+        $query = Order::with(['medicine', 'offer', 'storehouse'])
+            ->where('pharmacy_id', Auth::guard('pharmacy')->id());
     
-        return view('orders.pharmacy_index', compact('orders'));
+        // فلتر الحالة
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+    
+        // فلتر اسم الدواء (من medicine أو offer)
+        if ($request->filled('medicine')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('medicine', function ($q2) use ($request) {
+                    $q2->where('name', 'like', '%' . $request->medicine . '%');
+                })->orWhereHas('offer', function ($q3) use ($request) {
+                    $q3->where('title', 'like', '%' . $request->medicine . '%');
+                });
+            });
+        }
+    
+        // فلتر اسم المستودع
+        if ($request->filled('storehouse_id')) {
+            $query->where('store_houseS_id', $request->storehouse_id);
+        }
+    
+        // فلتر التاريخ من
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+    
+        // فلتر التاريخ إلى
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+    
+        $orders = $query->latest()->paginate(10); // بدلاً من get()
+        $storehouses = StoreHouse::all(); // تأكدي من اسم الموديل
+    
+        return view('orders.pharmacy_index', compact('orders', 'storehouses'));
     }
 
     public function createOrder(Request $request, $offerId)

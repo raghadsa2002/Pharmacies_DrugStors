@@ -8,10 +8,13 @@
             </div>
         </div>
 
-        <form method="GET" action="{{ route('medicines.products') }}">
+     
+<!-- Filters Section -->
+<form method="GET" action="{{ route('medicines.products') }}">
     @csrf
-    <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 20px;">
-        <select name="company_id">
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px;">
+        <!-- Company Filter -->
+        <select name="company_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
             <option value="">-- Select Company --</option>
             @foreach ($companies as $company)
                 <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
@@ -20,7 +23,8 @@
             @endforeach
         </select>
 
-        <select name="category_id">
+        <!-- Category Filter -->
+        <select name="category_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
             <option value="">-- Select Category --</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -29,7 +33,8 @@
             @endforeach
         </select>
 
-        <select name="storehouse_id">
+        <!-- Storehouse Filter -->
+        <select name="storehouse_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
             <option value="">-- Select Storehouse --</option>
             @foreach ($storehouses as $storehouse)
                 <option value="{{ $storehouse->id }}" {{ request('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
@@ -38,10 +43,10 @@
             @endforeach
         </select>
 
-        <button type="submit" class="btn btn-primary">Search</button>
+        <!-- Search Button -->
+        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; border-radius: 5px;">Search</button>
     </div>
 </form>
-
         <!-- Display Medicines -->
         @if(isset($medicines) && $medicines->count() > 0)
             <div class="row">
