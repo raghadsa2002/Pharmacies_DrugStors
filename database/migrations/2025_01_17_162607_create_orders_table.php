@@ -15,6 +15,8 @@ return new class extends Migration
         $table->id();
         $table->foreignId('pharmacy_id')->constrained()->onDelete('cascade'); 
         $table->foreignId('medicine_id')->constrained()->onDelete('cascade');
+        $table->foreignId('store_houses_id')->constrained()->onDelete('cascade');
+        
         $table->integer('quantity');              
         $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending'); 
         // علاقات
