@@ -62,6 +62,8 @@
                 </li>
                 <li>
                 <a href="{{ route('pharmacy.orders') }}">My Orders</a>
+                <a href="{{ route('pharmacy.tickets.index') }}">My tickets</a>
+
 </li>
                
               </ul>

@@ -12,8 +12,9 @@ use App\Http\Controllers\PharmacistOfferController;
 use App\Http\Controllers\Admin\StoreHouse\StoreHouseController;
 use App\Http\Controllers\StockManagementController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\StorehouseReportsController;
-
+use App\Http\Controllers\MessagesController;
 
 Route::get('/', function () {
     return redirect()->route('admin.login');
@@ -100,6 +101,7 @@ Route::get('/admin/reviews', [ReviewController::class, ' Index'])->name('admin.r
 
 Route::get('/storHouse/reviews', [StoreHouseController::class, 'showReviews'])->name('storHouse.reviews');
 
+
 Route::get('/favorites', function () {
     return view('favorites');
 })->name('favorites');
@@ -112,13 +114,52 @@ use App\Http\Controllers\ReportController;
 
 
 Route::prefix('pharmacy/reports')->middleware('auth:pharmacy')->group(function () {
+   
     Route::get('/', [ReportController::class, 'pharmacyReports'])->name('reports.pharmacy.index');
+   
+    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+    
+    Route::get('/tickets/ticketsMessages/{id}', [TicketController::class, 'getMessages'])->name('tickets.openchat');
+    Route::get('/tickets/closechat/{id}', [TicketController::class, 'closeTicket'])->name('tickets.closechat');
+    
+    Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::get('/pharmacy/mytickets', [TicketController::class, 'index'])->name('pharmacy.tickets.index');
+    Route::post('/pharmacy/tickets', [TicketController::class, 'store'])->name('tickets.store');
+});
 
 
 
 
+Route::get('/storehouse/mytickets', [TicketController::class, 'storehouseTickets'])->name('storehouse.tickets');
 
-Route::middleware(['auth:store_houses'])->prefix('storehouse')->group(function () {
+
+
+    Route::get('/tickets', [TicketController::class, 'index'])->name('pharmacy.tickets.index');
+Route::get('/pharmacy/mytickets', [TicketController::class, 'index'])
+    ->middleware('auth:pharmacy') // إذا عندك حارس (guard) للصيدليات
+    ->name('pharmacy.tickets.mytickets');
+ 
+
+Route::put('/tickets/{id}/close', [TicketController::class, 'closeTicket'])->name('tickets.close');
+
+Route::get('/storehouse/tickets/{id}/chat', [TicketController::class, 'getMessages'])->name('storehouse.tickets.chat');
+
+Route::post('/storehouse/tickets/{id}/send', [StorehouseTicketController::class, 'sendMessage'])->name('storehouse.tickets.sendMessage');
+Route::get('/tickets/chat/{ticket}', [MessageController::class, 'showChat'])->name('tickets.chat');
+Route::post('/tickets/chat/{ticket}', [MessageController::class, 'sendMessage'])->name('tickets.send');
+
+
+Route::get('/pharmacy/chat/{ticket_id}', [MessageController::class, 'showChat']);
+Route::post('/chat/{ticket}', [MessageController::class, 'store'])->name('chat.store');
+Route::get('/pharmacy/chat/{ticket_id}', [MessageController::class, 'showChat'])->name('chat.show');
+
+Route::get('/chat/{ticketId}', [MessageController::class, 'showChat'])->name('tickets.chat');
+
+Route::post('/send-message', [MessageController::class, 'sendMessage'])->name('message.send');
+ 
+
+Route::get('/tickets/{id}/chat', [TicketController::class, 'getMessages'])->name('tickets.chat');
+ Route::middleware(['auth:store_houses'])->prefix('storehouse')->group(function () {
     Route::get('/reports', [StorehouseReportsController::class, 'index'])->name('storehouse.reports');
 });
-});
+ 

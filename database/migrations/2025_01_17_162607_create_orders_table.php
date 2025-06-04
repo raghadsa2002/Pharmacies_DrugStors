@@ -13,15 +13,12 @@ return new class extends Migration
 {
     Schema::create('orders', function (Blueprint $table) {
         $table->id();
-        $table->unsignedBigInteger('pharmacy_id'); 
-        $table->unsignedBigInteger('medicine_id'); 
+        $table->foreignId('pharmacy_id')->constrained()->onDelete('cascade'); 
+        $table->foreignId('medicine_id')->constrained()->onDelete('cascade');
         $table->integer('quantity');              
         $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending'); 
-        $table->timestamps();
-
         // علاقات
-        $table->foreign('pharmacy_id')->references('id')->on('pharmacies')->onDelete('cascade'); 
-        $table->foreign('medicine_id')->references('id')->on('medicines')->onDelete('cascade');
+        $table->timestamps();
     });
 }
 

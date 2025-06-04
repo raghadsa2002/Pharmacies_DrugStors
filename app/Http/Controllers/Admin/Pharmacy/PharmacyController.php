@@ -8,6 +8,7 @@ use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Pharmacy\TicketController;
 use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 class PharmacyController extends Controller
@@ -20,6 +21,12 @@ class PharmacyController extends Controller
     {
         $pharmacies = Pharmacy::all();
         return view('Admin.Pharmacy.index', compact('pharmacies'));
+
+        $pharmacyId = auth()->user()->id;
+        $tickets = Ticket::where('pharmacy_id', $pharmacyId)->with('warehouse')->get();
+        return view('pharmacy.tickets.mytickets', compact('tickets'));
+
+
     }
 
     //عرض صفحة اضافة صيدلية
