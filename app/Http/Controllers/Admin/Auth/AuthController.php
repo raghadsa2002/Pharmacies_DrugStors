@@ -36,7 +36,10 @@ class AuthController extends Controller
             session()->put('actor', 'store_houses');
             return redirect()->route('admin.index');
         } else if (Auth::guard('employees')->attempt($check)) {
+            $employee = Auth::guard('employees')->user();
             session()->put('actor', 'employees');
+            session()->put('employee_type', $employee->type);
+            
             return redirect()->route('admin.index');
         }
         else if (Auth::guard('pharmacy')->attempt($check)) {

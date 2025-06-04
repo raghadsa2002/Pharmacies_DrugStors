@@ -50,7 +50,7 @@ class ReviewController extends Controller
             ->latest()
             ->get();
     
-        return view('admin.reviews.index', compact('reviews'));
+        return view('admin.StoreHouse.review', compact('reviews'));
     }
 
 

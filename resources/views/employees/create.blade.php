@@ -49,7 +49,14 @@
 
                                     <form method="POST" action="{{ route('employees.store') }}">
     @csrf
-
+  <div class="form-group">
+                            <label for="employee type">Employee Type</label>
+                            <select name="type" id="type" class="form-control" required>
+                                    <option value="data_entry">Data Entry</option>
+                                    <option value="orders_stocks">Orders and Stocks</option>
+                                    <option value="supports">Customer Supports</option>
+                            </select>
+                        </div>
     <div class="form-group">
         <label for="name">Employee Name</label>
         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>

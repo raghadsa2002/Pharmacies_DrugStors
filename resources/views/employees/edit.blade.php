@@ -46,6 +46,14 @@
                                         @method('PUT')
 
                                         <!-- Name -->
+                                          <div class="form-group">
+                                                <label for="employee type">Employee Type</label>
+                                                <select name="type" id="type" class="form-control" required>
+                                                        <option value="data_entry" {{ $employee->name == 'data_entry'? 'selected' : '' }} >Data Entry</option>
+                                                        <option value="orders_stocks" {{ $employee->name == 'orders_stocks'? 'selected' : '' }} >Orders and Stocks</option>
+                                                        <option value="supports" {{ $employee->name == 'supports'? 'selected' : '' }} >Customer Supports</option>
+                                                </select>
+                                            </div>
                                         <div class="form-group">
                                             <label for="name">Employee Name</label>
                                             <input type="text" class="form-control" id="name" name="name" 

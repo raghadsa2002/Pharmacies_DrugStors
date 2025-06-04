@@ -98,10 +98,10 @@ Route::get('/pharmacy/orders', [OrderController::class, 'pharmacyOrders'])->name
 
 Route::post('/pharmacy/orders/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+// Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
 
 
-Route::get('/admin/reviews', [ReviewController::class, ' Index'])->name('admin.reviews');
+Route::get('/admin/reviews', [ReviewController::class, 'index'])->name('admin.reviews');
 
 Route::get('/storHouse/reviews', [StoreHouseController::class, 'showReviews'])->name('storHouse.reviews');
 
@@ -178,7 +178,7 @@ Route::middleware(['auth:store_houses'])->prefix('storehouse')->group(function (
 
 
 
-Route::get('/products', [OrderController::class, 'products'])->name('products.index');
+// Route::get('/products', [OrderController::class, 'products'])->name('products.index');
 Route::get('/cart', function () {
     return view('cart.index');
 })->name('cart.index');

@@ -30,12 +30,14 @@ class EmployeeController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
+        'type' => 'required|string|max:255',
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:employees',
         'phone' => 'required|string|max:15',
         'address' => 'nullable|string',
         'password' => 'required|min:6',
     ]);
+    // return var_dump($validated['type']);
 
     // جلب المستودع الخاص بالمستخدم الحالي وإضافته تلقائياً
     $validated['storehouse_id'] = Auth::guard('store_houses')->user()->id;
@@ -55,6 +57,7 @@ class EmployeeController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'type' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:employees,email,' . $id,
             'phone' => 'required|string|max:15',
