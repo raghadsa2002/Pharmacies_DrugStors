@@ -1,79 +1,103 @@
 @include('website.layouts.websiteHeader')
 
+<style>
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        color: #51eaea;
+        
+
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .cart-icon-btn {
+        background: none;
+        border: none;
+        color: #51eaea;
+        font-size: 1.8rem;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .cart-icon-btn:hover {
+        transform: scale(1.1);
+    }
+</style>
+
 <div class="site-section">
     <div class="container">
-        <div class="row">
-            <div class="title-section text-center col-12">
-                <!-- Add title if needed -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2>Products</h2>
             </div>
         </div>
 
-     
-<!-- Filters Section -->
-<form method="GET" action="{{ route('medicines.products') }}">
-    @csrf
-    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px;">
-        <!-- Company Filter -->
-        <select name="company_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
-            <option value="">-- Select Company --</option>
-            @foreach ($companies as $company)
-                <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
-                    {{ $company->name }}
-                </option>
-            @endforeach
-        </select>
+        <!-- الفلاتر -->
+        <form method="GET" action="{{ route('medicines.products') }}">
+            <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+                <!-- الفلاتر مثل ما كانت -->
+                <select name="company_id" class="form-control" style="min-width: 220px;">
+                    <option value="">-- Select Company --</option>
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                            {{ $company->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-        <!-- Category Filter -->
-        <select name="category_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
-            <option value="">-- Select Category --</option>
-            @foreach ($categories as $category)
-                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </select>
+                <select name="category_id" class="form-control" style="min-width: 220px;">
+                    <option value="">-- Select Category --</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-        <!-- Storehouse Filter -->
-        <select name="storehouse_id" class="form-control" style="width: 250px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f8f9fa;">
-            <option value="">-- Select Storehouse --</option>
-            @foreach ($storehouses as $storehouse)
-                <option value="{{ $storehouse->id }}" {{ request('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
-                    {{ $storehouse->name }}
-                </option>
-            @endforeach
-        </select>
+                <select name="storehouse_id" class="form-control" style="min-width: 220px;">
+                    <option value="">-- Select Storehouse --</option>
+                    @foreach ($storehouses as $storehouse)
+                        <option value="{{ $storehouse->id }}" {{ request('storehouse_id') == $storehouse->id ? 'selected' : '' }}>
+                            {{ $storehouse->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-        <!-- Search Button -->
-        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; border-radius: 5px;">Search</button>
-    </div>
-</form>
-        <!-- Display Medicines -->
-        @if(isset($medicines) && $medicines->count() > 0)
-            <div class="row">
-                @foreach ($medicines as $medicine)
-                    <div class="col-sm-6 col-lg-4 text-center item mb-4">
-                        <span class="tag">{{ $medicine->name }}</span>
-                        <a href="shop-single.html">
-                        <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" alt="{{ $medicine->name }}" style="width: 200px; height: 200px; object-fit: cover;">
-                        </a>
-                        <h3 class="text-dark"><a href="shop-single.html">{{ $medicine->name }}</a></h3>
-                        <p class="price">الشركة: {{ $medicine->company?->name ?? 'غير محددة' }}</p>
-<p class="price">الفئة: {{ $medicine->category?->name ?? 'غير محددة' }}</p>
-<p class="price">المستودع: {{ $medicine->storehouse?->name ?? 'غير محددة' }}</p>
+                <button type="submit" class="btn btn-primary px-4">Search</button>
+            </div>
+        </form>
 
-                        <!-- عرض السعر مع التخفيض إن وجد -->
-                        @if($medicine->discount)
-  <p class="text-muted"><del>${{ $medicine->price }}</del></p>
-  <p class="text-danger">${{ $medicine->discount->discounted_price }}</p>
-@else
-  <p class="text-muted" style="visibility: hidden;"><del>--</del></p>
-  <p>${{ $medicine->price }}</p>
-@endif
+        <!-- قائمة الأدوية -->
+       @if(isset($medicines) && $medicines->count() > 0)
+<div class="row g-4">
+    @foreach ($medicines as $medicine)
+        <div class="col-sm-6 col-lg-4 text-center item mb-4">
+            <span class="tag d-block mb-2">{{ $medicine->name }}</span>
 
-<!-- زر الطلب -->
-<button class="btn btn-primary px-4 py-3 order-now" data-medicine-id="{{ $medicine->id }}" data-medicine-name="{{ $medicine->name }}">Order Now</button>
-                        </p>
-                        <span 
+            <img src="{{ asset('DashboardAssets/images/' . $medicine->image) }}" 
+                 alt="{{ $medicine->name }}" 
+                 class="img-fluid rounded" 
+                 style="width: 200px; height: 200px; object-fit: cover;">
+
+            <h3 class="text-dark mt-2">{{ $medicine->name }}</h3>
+
+            <p class="mb-1">Company: {{ $medicine->company?->name ?? 'N/A' }}</p>
+            <p class="mb-1">Category: {{ $medicine->category?->name ?? 'N/A' }}</p>
+            <p class="mb-1">Storehouse: {{ $medicine->storehouse?->name ?? 'N/A' }}</p>
+
+            @if($medicine->discount)
+                <p class="text-muted mb-0"><del>${{ number_format($medicine->price, 2) }}</del></p>
+                <p class="text-danger mb-2">${{ number_format($medicine->discount->discounted_price, 2) }}</p>
+            @else
+                <p style="visibility: hidden;"><del>--</del></p>
+                <p class="mb-2">${{ number_format($medicine->price, 2) }}</p>
+            @endif
+
+             <span 
   class="favorite-icon" 
   data-id="{{ $medicine->id }}" 
   data-name="{{ $medicine->name }}" 
@@ -82,68 +106,85 @@
   style="cursor: pointer; color: gray; font-size: 24px;">
   <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12.7692 6.70483C9.53846 2.01902 4 3.90245 4 8.68256C4 13.4627 13.2308 20 13.2308 20C13.2308 20 22 13.2003 22 8.68256C22 4.16479 16.9231 2.01903 13.6923 6.70483L13.2308 7.0791L12.7692 6.70483Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 </span>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <p class="text-center">No medicines match your search</p>
-        @endif
-    </div>
-</div>
 
-<!-- Pop-up Modal -->
-<div id="orderModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-    <div class="modal-content" style="max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background: #fff;">
-        <h4 id="modalMedicineName">Order Medicine</h4>
-        <form action="{{ route('orders.store') }}" method="POST" id="orderForm">
-    @csrf
-    <input type="hidden" id="medicine_id" name="medicine_id">
-    <div class="form-group">
-        <label for="medicine_name">Medicine Name</label>
-        <input type="text" id="medicine_name" name="medicine_name" class="form-control" readonly>
-    </div>
-    <div class="form-group">
-        <label for="quantity">Quantity</label>
-        <input type="number" id="quantity" name="quantity" class="form-control" required min="1">
-    </div>
-    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Send</button>
-    </div>
-    </form>
-    </div>
+            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                <button class="quantity-btn qty-decrease" data-id="{{ $medicine->id }}">-</button>
+                <input type="number" id="quantity-{{ $medicine->id }}" value="1" min="1" style="width: 50px; text-align: center;">
+                <button class="quantity-btn qty-increase" data-id="{{ $medicine->id }}">+</button>
+            </div>
+
+            <button class="cart-icon-btn add-to-cart-btn" 
+                    data-id="{{ $medicine->id }}" 
+                    data-name="{{ $medicine->name }}" 
+                    data-price="{{ $medicine->discount ? $medicine->discount->discounted_price : $medicine->price }}">
+                <i class="fa fa-shopping-cart"></i>
+            </button>
+        </div>
+
+        
+    @endforeach
 </div>
+@else
+    <p class="text-center mt-5">No medicines match your search criteria.</p>
+@endif
+
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('orderModal');
-    const closeModalButtons = document.querySelectorAll('.close-modal');
-
-    document.querySelectorAll('.order-now').forEach(button => {
-        button.addEventListener('click', function () {
-            const medicineId = this.getAttribute('data-medicine-id');
-            const medicineName = this.getAttribute('data-medicine-name');
-
-            document.getElementById('modalMedicineName').textContent = "Order " + medicineName;
-            document.getElementById('medicine_id').value = medicineId;
-            document.getElementById('medicine_name').value = medicineName;
-
-            modal.style.display = 'flex';
+document.addEventListener('DOMContentLoaded', () => {
+    // +/-
+    document.querySelectorAll('.qty-increase').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const input = document.getElementById(`quantity-${id}`);
+            input.value = parseInt(input.value) + 1;
         });
     });
 
-    closeModalButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            modal.style.display = 'none';
+    document.querySelectorAll('.qty-decrease').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const input = document.getElementById(`quantity-${id}`);
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
         });
     });
 
-    window.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    // إضافة للسلة
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+            const price = parseFloat(button.dataset.price);
+            const qty = parseInt(document.getElementById(`quantity-${id}`).value);
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const existingIndex = cart.findIndex(item => item.id == id && item.type === 'normal');
+
+            if (existingIndex !== -1) {
+                cart[existingIndex].quantity += qty;
+            } else {
+                cart.push({ id, name, price, quantity: qty, type: 'normal' });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Added to cart!');
+            updateCartCount();
+        });
+    });
+
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const countElem = document.getElementById('cart-count');
+        if (countElem) {
+            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countElem.textContent = totalQuantity;
         }
-    });
+    }
 
+    updateCartCount();
+    // المفضلة
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
     document.querySelectorAll('.favorite-icon').forEach(icon => {
@@ -176,6 +217,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-</script>
 
-@include('website.layouts.websiteFooter')
+
+
+
+</script>

@@ -14,7 +14,11 @@ class MedicineController extends Controller
     public function homePage()
     {
         $medicines = Medicine::with('company', 'category')->get();
-        return view('website.Homepage', compact('medicines'));
+        // the user notifications 
+        $pharmacy = Auth::guard('pharmacy')->user();
+        $notifications = $pharmacy->notifications;
+        // return dd($notifications);
+        return view('website.Homepage', compact('medicines','notifications'));
     }
 
     public function index()

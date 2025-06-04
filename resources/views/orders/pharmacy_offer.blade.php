@@ -1,74 +1,52 @@
-
 @include('website.layouts.websiteHeader')
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Available Offers</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
 
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         body {
-            background-color:rgb(255, 255, 255);
+            background-color: #ffffff;
             padding: 30px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         .card {
-            transition: transform 0.2s ease-in-out;
             border: none;
             border-radius: 15px;
-            color: #333;
-            height: 100%;
+            transition: transform 0.2s ease-in-out;
         }
-
         .card:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 20px rgba(25, 155, 133, 0.1);
         }
-
-        .card-color-1 { background-color:rgb(248, 243, 243); }
-        .card-color-2 { background-color:rgb(255, 255, 255); }
-        .card-color-3 { background-color: #f3fcf5; }
-
         .card-title {
             font-weight: bold;
-            color: #2c3e50;
+            color: #00796b;
             text-align: center;
-            font-size: 1.3rem;
         }
-
-        .btn-primary {
-            background-color: #5c7cfa;
-            border: none;
+        .offer-item {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
         }
-
-        .btn-primary:hover {
-            background-color: #4c6ef5;
-        }
-
-        .offer-note {
-            font-size: 0.9rem;
-            font-style: italic;
-            color: #888;
-        }
-
-        .price-line {
-            text-decoration: line-through;
-            color: #888;
-        }
-
-        .price-after {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
         .timer {
-            font-size: 1.1rem;
             font-weight: bold;
+            font-size: 1.1rem;
             color: #e74c3c;
         }
     </style>
@@ -76,139 +54,199 @@
 <body>
 
 <div class="container">
-    <h2 class="mb-4 text-center">Available Offers</h2>
-
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    <h2 class="text-center mb-4">Available Offers</h2>
 
     <div class="row">
-    @foreach ($offers as $offer)
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow" style="background-color:rgb(244, 243, 243); border-radius: 15px; border: 2px solid #00bcd4;">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h5 class="card-title text-center" style="font-weight: bold; font-size: 1.4rem; color: #00796b;">
-                        {{ $offer->title }}
-                    </h5>
+        @foreach ($offers as $offer)
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="background-color: #fafafa; border: 2px solid #00bcd4;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <!-- عنوان العرض -->
+                        <h5 id="offer-title-{{ $offer->id }}" class="card-title">{{ $offer->title }}</h5>
+                        
+                        <!-- سعر العرض (مخفي) -->
+                        <p id="offer-price-{{ $offer->id }}" style="display:none;">{{ $offer->price }}</p>
+                        
+                        <p class="text-center text-muted">Storehouse: {{ $offer->storehouse->name }}</p>
 
-                    <!-- Medicine names -->
-                    <p class="card-text text-center" style="font-size: 1rem; font-weight: bold; color: #00796b;">
-                        {{ $offer->medicine1->name ?? '---' }} + {{ $offer->medicine2->name ?? '---' }}
-                    </p>
+                        <div class="d-flex flex-wrap gap-3"><div class="d-flex flex-wrap justify-content-start gap-3" style="row-gap: 20px;">
+    @foreach ($offer->offer_items as $item)
+        <div class="offer-item border rounded p-3" style="width: 280px; min-height: 220px;">
+            <strong>{{ $item->medicine->name }}</strong><br>
 
-                    <!-- Discount -->
-                    <p class="card-text text-center"><strong>Discount:</strong> {{ $offer->discount_price }}%</p>
+            {{-- السعر الأصلي --}}
+            <span class="text-muted" style="text-decoration: line-through;">
+                Original Price: {{ number_format($item->medicine->price, 2) }} $
+            </span><br>
 
-                    <!-- Old Price with Strike and New Price -->
-                    @php
-                        $medicine1_price = $offer->medicine1->price ?? 0;
-                        $medicine2_price = $offer->medicine2->price ?? 0;
-                        $total_price = $medicine1_price + $medicine2_price;
-                        $discounted_price = $total_price - ($total_price * $offer->discount_price / 100);
-                    @endphp
+            {{-- نوع العرض --}}
+            Type:
+            <span class="badge bg-{{ $item->type == 'discount' ? 'primary' : 'success' }}">
+                {{ ucfirst($item->type) }}
+            </span><br>
 
-                    <p class="card-text text-center">
-                        <strong>Original Price:</strong>
-                        <span style="text-decoration: line-through; color: #888;">${{ number_format($total_price, 2) }}</span>
-                    </p>
+            Quantity Required: {{ $item->required_quantity }}<br>
 
-                    <p class="card-text text-center">
-                        <strong>offer Price:</strong>
-                        <span style="color: #27ae60; font-weight: bold;">${{ number_format($discounted_price, 2) }}</span>
-                    </p>
+            @if ($item->type === 'discount')
+                @php
+                    $discountedPrice = $item->medicine->price * (1 - $item->value / 100);
+                @endphp
 
-                    <!-- Timer -->
-                    <p class="card-text text-center" id="timer-{{ $offer->id }}" style="font-weight: bold; font-size: 1.1rem; color: #d32f2f;">
-                        Loading...
-                    </p>
+                <span class="text-info">Discount: {{ $item->value }}%</span><br>
 
-                    <!-- Order Form -->
-                    @php
-    $isExpired = \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($offer->end_date));
-@endphp
+                <span class="fw-bold text-success">
+                    After Discount: {{ number_format($discountedPrice, 2) }} $
+                </span>
 
-@if (!$isExpired)
-    <!-- Order Form -->
-    <form method="POST" action="{{ route('offers.order', $offer->id) }}">
-        @csrf
-        <div class="mb-2">
-            <label for="quantity" class="form-label">Quantity</label>
-            <input type="number" name="quantity" class="form-control" min="1" required>
+               
+
+            @elseif ($item->type === 'free')
+             
+            @endif
         </div>
-        <button type="submit" class="btn btn-info text-white w-100">Order Offer</button>
-    </form>
-@else
-    <p class="text-center text-muted mt-2" style="font-style: italic;">This offer has expired and cannot be ordered.</p>
-@endif
+    @endforeach
+
+</div>
+                        </div>
+
+                        <!-- مؤقت انتهاء العرض -->
+                        <p id="timer-{{ $offer->id }}" class="text-center timer">Loading...</p>
+
+                        <!-- اختيار الكمية -->
+                        
+
+                        <!-- زر الإضافة -->
+                  <form method="POST" action="{{ route('orders.offer', $offer->id) }}">
+    @csrf
+    <input type="hidden" name="offer_id" value="{{ $offer->id }}">
+    <button type="submit" class="btn btn-success w-100">Order Now</button>
+</form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <script>
-            function startTimer(endDate, elementId) {
-                const countDownDate = new Date(endDate).getTime();
+            <script>
+                // مؤقت العرض
+                function startTimer(endDate, elementId) {
+                    const countDownDate = new Date(endDate).getTime();
 
-                const x = setInterval(function () {
-                    const now = new Date().getTime();
-                    const distance = countDownDate - now;
+                    const x = setInterval(function () {
+                        const now = new Date().getTime();
+                        const distance = countDownDate - now;
 
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    const timerElement = document.getElementById(elementId);
+                        const timerElement = document.getElementById(elementId);
 
-                    if (distance < 0) {
-                        clearInterval(x);
-                        timerElement.innerHTML = "Offer expired";
-                        timerElement.style.color = "gray";
-                    } else {
-                        timerElement.innerHTML = days + "d " + hours + "h "
-                            + minutes + "m " + seconds + "s ";
+                        if (distance < 0) {
+                            clearInterval(x);
+                            timerElement.innerHTML = "Offer expired";
+                            timerElement.style.color = "gray";
+                            // Hide add to cart button and quantity input if expired
+                            const cardBody = timerElement.closest('.card-body');
+                            if (cardBody) {
+                                const btn = cardBody.querySelector('button');
+                                const qtyInput = cardBody.querySelector('input[type="number"]');
+                                if (btn) btn.style.display = 'none';
+                                if (qtyInput) qtyInput.style.display = 'none';
+                            }
+                        } else {
+                            timerElement.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-                        if (distance < 3600000) {
-                            timerElement.style.color = "red";
+                            if (distance < 3600000) {
+                                timerElement.style.color = "red";
+                            }
                         }
-                    }
-                }, 1000);
-            }startTimer("{{ $offer->end_date }}", "timer-{{ $offer->id }}");
-        </script>
-    @endforeach
-</div>
-    </div>
-</div>
+                    }, 1000);
+                }
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                startTimer("{{ $offer->end_date }}", "timer-{{ $offer->id }}");
 
-<script>
-    function updateTimers() {
-        const timers = document.querySelectorAll('.timer');
-        timers.forEach(timer => {
-            const endDateStr = timer.dataset.end;
-            const endDate = new Date(endDateStr);
-            const now = new Date();
-            const diff = endDate - now;
+                // إضافة العرض للسلة
+             function addOfferToCart(offerId) {
+    const quantityInput = document.getElementById('quantity-' + offerId);
+    const quantity = parseInt(quantityInput.value);
 
-            if (diff <= 0) {
-                timer.innerText = "Expired";
-                timer.style.color = '#888';
-                return;
-            }
+    if (isNaN(quantity) || quantity < 1) {
+        alert('Please enter a valid quantity');
+        return;
+    }
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / 1000 / 60) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
+    const offerTitle = document.getElementById('offer-title-' + offerId).innerText.trim();
+    const offerPriceText = document.getElementById('offer-price-' + offerId).innerText.trim();
+    const offerPrice = parseFloat(offerPriceText);
 
-            timer.innerText = ${days}d ${hours}h ${minutes}m ${seconds}s left;
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    const exists = cart.find(item => item.type === 'offer' && item.id === offerId);
+    if (exists) {
+        alert("This offer is already in your cart.");
+        return;
+    }
+
+    const offerCard = document.getElementById('offer-title-' + offerId).closest('.card-body');
+    const offerItems = offerCard.querySelectorAll('.offer-item');
+    const offerDetails = [];
+
+    for (const item of offerItems) {
+        const name = item.querySelector('strong')?.innerText || '';
+        const originalPriceText = item.querySelector('.text-muted')?.innerText || '';
+        const originalPrice = parseFloat(originalPriceText.replace(/[^\d.]/g, ''));
+
+        const typeText = item.querySelector('.badge')?.innerText.toLowerCase();
+        const valueText = item.querySelector('.text-info, .text-success')?.innerText || '';
+        const value = parseFloat(valueText.replace(/[^\d.]/g, ''));
+
+        const quantityRequiredText = item.innerText.match(/Quantity Required: (\d+)/);
+        const requiredQuantity = quantityRequiredText ? parseInt(quantityRequiredText[1]) : 1;
+
+        // تحقق إن الكمية أقل من المطلوبة
+      //  if (quantity < requiredQuantity) {
+        //    alert(`To benefit from this offer on "${name}", you need to buy at least ${requiredQuantity} units.`);
+        //    return;
+       // }
+
+        offerDetails.push({
+            medicine_name: name,
+            original_price: originalPrice,
+            type: typeText,
+            value: value,
+            required_quantity: requiredQuantity
         });
     }
 
-    updateTimers();
-    setInterval(updateTimers, 1000);
-</script>
+    cart.push({
+        type: 'offer',
+        id: offerId,
+        name: offerTitle,
+        price: offerPrice,
+        quantity: quantity,
+        items: offerDetails
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert("Offer added to cart!");
+    updateCartCount();
+}
+
+
+                function updateCartCount() {
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const count = cart.length;
+                    const cartCountElement = document.getElementById('cart-count');
+                    if (cartCountElement) {
+                        cartCountElement.innerText = count;
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', updateCartCount);
+            </script>
+        @endforeach
+    </div>
+</div>
 
 </body>
 </html>

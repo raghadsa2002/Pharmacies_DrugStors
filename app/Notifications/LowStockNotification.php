@@ -3,52 +3,33 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class LowStockNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    protected $medicine;
+
+    public function __construct($medicine)
     {
-        //
+        $this->medicine = $medicine;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
-        return ['mail'];
+        return ['database']; // تخزينها في قاعدة البيانات
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable)
     {
         return [
-            //
+            'medicine_id' => $this->medicine->id,
+            'medicine_name' => $this->medicine->name,
+            'stock' => $this->medicine->stock,
+            'message' => "Stock for medicine {$this->medicine->name} is low ({$this->medicine->stock} units).",
+             'title' => 'Low Stock Alert',
+        'body' => 'The stock for Paracetamol is below minimum!',
         ];
     }
 }

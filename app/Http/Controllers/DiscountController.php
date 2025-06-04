@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Discount;
 use App\Models\Medicine;
+use App\Models\Pharmacy;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\DiscountNotification;
+use Illuminate\Support\Facades\Notification;
 
 class DiscountController extends Controller
 {
@@ -37,6 +40,10 @@ $discounts = Discount::whereHas('medicine', function ($query) use ($storehouseId
             'discounted_price' => $request->discounted_price,
         ]);
 
+        // Send DiscountNotification
+        $pharmcies = Pharmacy::all();
+        $medicine = Medicine::find($request->medicine_id);
+        Notification::send($pharmcies, new DiscountNotification($medicine));
         return redirect()->route('discounts.index')->with('success', 'تم إضافة التخفيض بنجاح');
     }
 
