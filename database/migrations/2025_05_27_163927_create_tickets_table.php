@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
              
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('storehouse_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pharmacy_id')->constrained()->onDelete('cascade');            
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->foreignId('storehouse_id')->constrained('store_houses')->onDelete('cascade');
+            $table->foreignId('pharmacy_id')->constrained('pharmacies')->onDelete('cascade');
             $table->text('message');
             $table->enum('status', ['open', 'closed'])->default('open');
             $table->timestamps();

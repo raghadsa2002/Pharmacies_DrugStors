@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Medicine;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -46,21 +48,21 @@ class StorehouseReportsController extends Controller
         }
 
         // 3. Stock Quantity Report (current quantity of each medicine in this storehouse)
-$stockQuantities = \App\Models\Medicine::where('store_houses_id', $storehouseId)
-->select('name', 'stock') // assuming 'stock' is the column storing current quantity
-->get()
-->map(function ($medicine) {
-    return [
-        'name' => $medicine->name,
-        'quantity' => $medicine->stock,
-    ];
-});
-       
+        $stockQuantities = Medicine::where('store_houses_id', $storehouseId)
+            ->select('name', 'stock') // assuming 'stock' column has quantity
+            ->get()
+            ->map(function ($medicine) {
+                return [
+                    'name' => $medicine->name,
+                    'quantity' => $medicine->stock,
+                ];
+            });
 
-        // 4. Popular Medicines (all statuses)
-        $popularMedicinesRaw = Order::select('medicine_id', DB::raw('COUNT(*) as total'))
-            ->where('store_houses_id', $storehouseId)
-            ->whereNotNull('medicine_id')
+        // 4. Popular Medicines (using OrderItems instead of Orders)
+        $popularMedicinesRaw = OrderItem::select('medicine_id', DB::raw('SUM(quantity) as total'))
+            ->whereHas('order', function ($query) use ($storehouseId) {
+                $query->where('store_houses_id', $storehouseId);
+            })
             ->groupBy('medicine_id')
             ->with('medicine')
             ->get();
@@ -90,7 +92,7 @@ $stockQuantities = \App\Models\Medicine::where('store_houses_id', $storehouseId)
             ],
             'popularMedicines' => $popularMedicines,
             'statusCounts' => $statusCounts,
-            'stockQuantities' => $stockQuantities, // << جديد
+            'stockQuantities' => $stockQuantities,
         ]);
     }
 }

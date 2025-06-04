@@ -2,110 +2,176 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Offer;
-use App\Models\Medicine;
 use Illuminate\Http\Request;
+use App\Models\Offer;
+use App\Models\OfferItem;
+use App\Models\Medicine;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Pharmacy;
+use App\Notifications\NewOfferNotification;
 
 class OfferController extends Controller
 {
-    // عرض كل العروض للمستودع المسجل دخول
-    public function index()
-    {
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-        $offers = Offer::where('store_houses_id', $storeHouseId)
-                        ->with(['medicine1', 'medicine2'])
-                        ->latest()
-                        ->get();
+ public function index()
+{
+    $storehouseId = Auth::guard('store_houses')->id();
 
-        return view('offers.index', compact('offers'));
-    }
+    $offers = Offer::where('store_houses_id', $storehouseId)
+        ->with('items.medicine')
+        ->latest()
+        ->paginate(10); // Pagination هنا
 
-    // عرض نموذج إضافة عرض جديد
+    return view('offers.index', compact('offers'));
+}
+
     public function create()
     {
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-        $medicines = Medicine::where('store_houses_id', $storeHouseId)->get();
-
+        $storehouseId = Auth::guard('store_houses')->id();
+        $medicines = Medicine::where('store_houses_id', $storehouseId)->get();
         return view('offers.create', compact('medicines'));
     }
 
-    // تخزين العرض الجديد
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'medicine_id_1' => 'required|exists:medicines,id|different:medicine_id_2',
-            'medicine_id_2' => 'required|exists:medicines,id|different:medicine_id_1',
-            'discount_price' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'items' => 'required|array|min:1',
+        'items.*.medicine_id' => 'required|exists:medicines,id',
+        'items.*.type' => 'required|in:discount,free',
+        'items.*.required_quantity' => 'required|integer|min:1',
+    ]);
 
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-
-        try {
-            Offer::create([
-                'title' => $request->title,
-                'store_houses_id' => $storeHouseId,
-                'medicine_id_1' => $request->medicine_id_1,
-                'medicine_id_2' => $request->medicine_id_2,
-                'discount_price' => $request->discount_price,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-            ]);
-
-            return redirect()->route('offers.index')->with('success', 'The offer has been successfully added');
-        } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred while adding the offer: ' . $e->getMessage());
+    // تحقق مخصص للقيمة فقط إذا كانت type = discount
+    foreach ($request->items as $index => $item) {
+        if ($item['type'] !== 'free' && (!isset($item['value']) || $item['value'] === null)) {
+            return back()->withErrors([
+                "items.$index.value" => 'The value field is required when type is discount.',
+            ])->withInput();
         }
     }
 
-    // عرض نموذج تعديل عرض
-    public function edit($id)
-    {
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-        $offer = Offer::where('store_houses_id', $storeHouseId)->findOrFail($id);
-        $medicines = Medicine::where('store_houses_id', $storeHouseId)->get();
+    $storeHouseUser = auth('store_houses')->user();
 
-        return view('offers.edit', compact('offer', 'medicines'));
+    $offer = Offer::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
+        'store_houses_id' => $storeHouseUser->id,
+    ]);
+
+ 
+
+// إرسال إشعار لكل الصيدليات
+$pharmacies = Pharmacy::all();
+foreach ($pharmacies as $pharmacy) {
+    $pharmacy->notify(new NewOfferNotification($request->title));
+}
+
+    foreach ($request->items as $item) {
+        $offer->items()->create([
+            'medicine_id' => $item['medicine_id'],
+            'type' => $item['type'],
+            'value' => $item['type'] === 'free' ? 0 : $item['value'], // هنا تتأكدين إن القيمة 0 لو مجاني
+            'required_quantity' => $item['required_quantity'],
+        ]);
     }
 
-    // تحديث العرض
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'medicine_id_1' => 'required|exists:medicines,id|different:medicine_id_2',
-            'medicine_id_2' => 'required|exists:medicines,id|different:medicine_id_1',
-            'discount_price' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+    return redirect()->route('offers.index')->with('success', 'Offer created successfully!');
+}
 
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-        $offer = Offer::where('store_houses_id', $storeHouseId)->findOrFail($id);
+public function edit($id)
+{
+    $storehouseId = auth('store_houses')->id();
 
-        $offer->update([
-            'title' => $request->title,
-            'medicine_id_1' => $request->medicine_id_1,
-            'medicine_id_2' => $request->medicine_id_2,
-            'discount_price' => $request->discount_price,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+    $offer = Offer::where('store_houses_id', $storehouseId)
+        ->with('items')
+        ->findOrFail($id);
 
-        return redirect()->route('offers.index')->with('success', 'The offer has been successfully updated');
+    $medicines = Medicine::where('store_houses_id', $storehouseId)->get();
+
+    return view('offers.edit', compact('offer', 'medicines'));
+}
+
+public function update(Request $request, $id)
+{
+    $storehouseId = auth('store_houses')->id();
+
+    // validation الأساسي
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'items' => 'required|array|min:1',
+        'items.*.medicine_id' => 'required|exists:medicines,id',
+        'items.*.type' => 'required|in:discount,free',
+        'items.*.value' => 'nullable|numeric|min:0',
+        'items.*.required_quantity' => 'required|integer|min:1',
+    ]);
+
+    // تحقق مخصص بعد الفاليديشن
+    foreach ($request->items as $index => $item) {
+        if ($item['type'] !== 'free' && (!isset($item['value']) || $item['value'] === null)) {
+            return back()->withErrors([
+                "items.$index.value" => 'The value field is required when type is discount.',
+            ])->withInput();
+        }
     }
 
-    // حذف العرض
+    $offer = Offer::where('store_houses_id', $storehouseId)->findOrFail($id);
+
+    // تحديث بيانات العرض الأساسي
+    $offer->update([
+        'title' => $request->title,
+        'description' => $request->description,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
+    ]);
+
+    // حذف العناصر المحددة (IDs محذوفة)
+    if ($request->filled('deleted_items')) {
+        $deletedIds = explode(',', $request->deleted_items);
+        OfferItem::whereIn('id', $deletedIds)->delete();
+    }
+
+    // معالجة العناصر: تحديث الموجودين وإضافة الجدد
+    foreach ($request->items as $itemData) {
+        if (isset($itemData['id'])) {
+            // تحديث عنصر موجود
+            $item = OfferItem::find($itemData['id']);
+            if ($item && $item->offer_id == $offer->id) {
+                $item->update([
+                    'medicine_id' => $itemData['medicine_id'],
+                    'type' => $itemData['type'],
+                    'value' => $itemData['type'] === 'free' ? 0 : $itemData['value'], // لو free خلي القيمة 0
+                    'required_quantity' => $itemData['required_quantity'],
+                ]);
+            }
+        } else {
+            // إضافة عنصر جديد
+            $offer->items()->create([
+                'medicine_id' => $itemData['medicine_id'],
+                'type' => $itemData['type'],
+                'value' => $itemData['type'] === 'free' ? 0 : $itemData['value'], // لو free خلي القيمة 0
+                'required_quantity' => $itemData['required_quantity'],
+            ]);
+        }
+    }
+
+    return redirect()->route('offers.index')->with('success', 'Offer updated successfully!');
+}
     public function destroy($id)
     {
-        $storeHouseId = Auth::guard('store_houses')->user()->id;
-        $offer = Offer::where('store_houses_id', $storeHouseId)->findOrFail($id);
+        $storehouseId = Auth::guard('store_houses')->id();
+        $offer = Offer::where('store_houses_id', $storehouseId)->findOrFail($id);
         $offer->delete();
-
-        return redirect()->route('offers.index')->with('success', 'The offer has been deleted successfully ');
+        return redirect()->route('offers.index')->with('success', 'Offer deleted successfully.');
     }
+
+
+    
 }

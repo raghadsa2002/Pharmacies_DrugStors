@@ -2,41 +2,42 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Offer extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'title',
-        'store_houses_id',
-        'medicine_id_1',
-        'medicine_id_2',
-        'discount_price',
+        'description',
         'start_date',
         'end_date',
+        'image',
+        'store_houses_id',
     ];
 
-    public function medicine1()
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
+    public function items()
     {
-        return $this->belongsTo(Medicine::class, 'medicine_id_1');
+        return $this->hasMany(OfferItem::class);
     }
 
-    public function medicine2()
-    {
-        return $this->belongsTo(Medicine::class, 'medicine_id_2');
-    }
 
     public function storehouse()
-    {
-        return $this->belongsTo(StoreHouse::class, 'store_houses_id');
-    }
+{
+    return $this->belongsTo(Storehouse::class, 'store_houses_id'); // اسم العمود قد يختلف عندك، تأكدي منه
+}
 
-    // إضافة علاقة الطلبات
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
+public function offer_items()
+{
+    return $this->hasMany(OfferItem::class);
+}
+// App\Models\Offer.php
+public function orders()
+{
+    return $this->hasMany(Order::class);
+}
 }

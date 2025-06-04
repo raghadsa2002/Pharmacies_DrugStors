@@ -21,6 +21,7 @@ class Medicine extends Model
         'company_id', 
         'description',
         'image',
+        'min_stock'
     ];
 
     

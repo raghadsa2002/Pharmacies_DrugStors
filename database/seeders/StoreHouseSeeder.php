@@ -17,6 +17,7 @@ class StoreHouseSeeder extends Seeder
 
         StoreHouse::create([
             'name' => 'Store House',
+            'email' => 'storehouse@gmail.com',
             'phone' => '0987654321',
             'status' => '1',
             'city' => 'Damas',

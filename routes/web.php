@@ -16,6 +16,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\StorehouseReportsController;
 use App\Http\Controllers\MessagesController;
 
+
 Route::get('/', function () {
     return redirect()->route('admin.login');
 });
@@ -49,7 +50,7 @@ Route::resource('employees', EmployeeController::class);
 Route::get('employees/login', [EmployeeController::class, 'employees_login_page'])->name('employees_login_page');
 Route::post('EmployeeLogin', [EmployeeController::class, 'EmployeeLogin'])->name('EmployeeLogin');
 
-Route::resource('offers', OfferController::class);
+
 use App\Http\Controllers\DiscountController;
 
 Route::middleware(['auth:store_houses'])->group(function () {
@@ -59,12 +60,16 @@ Route::middleware(['auth:store_houses'])->group(function () {
 // صفحة العروض الخاصة بالصيدلي
 
 
-Route::get('/orders/pharmacy-offers', [PharmacistOfferController::class, 'index'])->name('orders.pharmacyOffers');
+// Route::get('/orders/pharmacy-offers', [PharmacistOfferController::class, 'index'])->name('orders.pharmacyOffers');
 
-Route::post('/offers/{offer}/order', [OrderController::class, 'createOrder'])->name('offers.order');
+// Route::post('/offers/{offer}/order', [OrderController::class, 'createOrder'])->name('offers.order');
 
 
 
+Route::resource('offers', OfferController::class);
+Route::get('/pharmacy/offers', [PharmacistOfferController::class, 'index'])->name('pharmacy.offers');
+Route::post('/offers/order/{offer}', [OrderController::class, 'orderOffer'])->name('orders.offer');
+Route::post('/cart/checkout', [OrderController::class, 'checkout'])->name('cart.checkout');
 
 
 Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
@@ -84,7 +89,6 @@ Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
-Route::post('orders/store', [OrderController::class, 'store'])->name('orders.store');
 
 
 Route::post('orders/update-status/{id}', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
@@ -107,7 +111,7 @@ Route::get('/favorites', function () {
 })->name('favorites');
 require __DIR__.'/auth.php';
 
-
+Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
 //التقارير
 use App\Http\Controllers\ReportController;
@@ -163,3 +167,37 @@ Route::get('/tickets/{id}/chat', [TicketController::class, 'getMessages'])->name
     Route::get('/reports', [StorehouseReportsController::class, 'index'])->name('storehouse.reports');
 });
  
+Route::middleware(['auth:store_houses'])->prefix('storehouse')->group(function () {
+    Route::get('/reports', [StorehouseReportsController::class, 'index'])->name('storehouse.reports');
+});
+
+
+
+// السلة
+
+
+
+
+Route::get('/products', [OrderController::class, 'products'])->name('products.index');
+Route::get('/cart', function () {
+    return view('cart.index');
+})->name('cart.index');
+Route::post('/cart/store', [OrderController::class, 'storeCart'])->name('cart.store');
+Route::get('/pharmacy-orders', [OrderController::class, 'pharmacyOrders'])->name('orders.pharmacyOrders');
+Route::get('/pharmacy/orders', [OrderController::class, 'pharmacyOrders'])->name('pharmacy.orders');
+
+Route::post('/checkout', [OrderController::class, 'submit'])->name('cart.submit');
+
+
+Route::get('/cart', function () {
+    return view('cart.index');
+})->name('cart.index');
+
+Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
+// الاشعارات
+Route::post('/notifications/mark-as-read', function () {
+    auth('store_houses')->user()->unreadNotifications->markAsRead();
+    return response()->json(['status' => 'success']);
+})->name('notifications.read');
